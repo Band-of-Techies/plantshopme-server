@@ -9,7 +9,7 @@ module.exports = () => {
 	};
 	try {
 		
-		mongoose.connect(process.env.DB, {
+		mongoose.connect('mongodb+srv://myplantstore11:CBhv18MmYmhbXwOv@myplantstore.1f9wpmy.mongodb.net/My_PlantStore-DB?retryWrites=true&w=majority', {
 			socketTimeoutMS: 30000, // 30 seconds
 			connectTimeoutMS: 30000, // 30 seconds
 			// ... other options
