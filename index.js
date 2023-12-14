@@ -102,34 +102,34 @@ app.use("/auth", authRoute);
 // Mount route handlers
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api", mainCategoryRoutes);
-app.use("/api", categoryRoutes);
-app.use("/api", subCategoryRoutes);
-app.use("/api", plantcareRoutes);
-app.use("/api",featureTagRoutes);
-app.use("/api",addProductRouter);
-app.use("/api",addPotRouter);
-app.use("/api",productcarelistRouter);
-app.use("/api",plantLengthRouter);
-app.use("/api",productstockRouter);
-app.use("/api",selectedlengthRouter);
-app.use('/api',cartRouter);
-app.use("/api" ,reviewRouter);
+app.use("/", mainCategoryRoutes);
+app.use("/", categoryRoutes);
+app.use("/", subCategoryRoutes);
+app.use("/", plantcareRoutes);
+app.use("/",featureTagRoutes);
+app.use("/",addProductRouter);
+app.use("/",addPotRouter);
+app.use("/",productcarelistRouter);
+app.use("/",plantLengthRouter);
+app.use("/",productstockRouter);
+app.use("/",selectedlengthRouter);
+app.use('/',cartRouter);
+app.use("/" ,reviewRouter);
 app.use("/api/customer", CustomerNormalRouter);
 app.use("/api/Customerauth", CNauthRouter);
-app.use("/api/blogs",blogsRoute)
-app.use("/api",paymentRouter);
-app.use("/api",FlashSalesRouter);
-app.use("/api",potLengthRouter);
-app.use("/api",BannerRouter)
-app.use("/api",couponsRouter)
-app.use("/api",locationRouter)
-app.use("/api",newsletterRouter)
-app.use("/api",dimensionRoute);
+app.use("/blogs",blogsRoute)
+app.use("/",paymentRouter);
+app.use("/",FlashSalesRouter);
+app.use("/",potLengthRouter);
+app.use("/",BannerRouter)
+app.use("/",couponsRouter)
+app.use("/",locationRouter)
+app.use("/",newsletterRouter)
+app.use("/",dimensionRoute);
 
-app.use("/api",dashboardrouter)
+app.use("/",dashboardrouter)
 
-app.use("/api",addnewproducts)
+app.use("/",addnewproducts)
 // Serve static images
 app.use('/Image', express.static(path.join(__dirname, 'Image')));
 app.use('/Icon', express.static(path.join(__dirname, 'Icon')));
