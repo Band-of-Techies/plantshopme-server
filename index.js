@@ -134,7 +134,7 @@ app.use("/api",addnewproducts)
 app.use('/Image', express.static(path.join(__dirname, 'Image')));
 app.use('/Icon', express.static(path.join(__dirname, 'Icon')));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
