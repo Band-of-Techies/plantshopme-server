@@ -9,7 +9,7 @@ module.exports = () => {
 	};
 	try {
 		
-		mongoose.connect('mongodb+srv://myplantstore11:CBhv18MmYmhbXwOv@myplantstore.1f9wpmy.mongodb.net/My_PlantStore-DB?retryWrites=true&w=majority', {
+		mongoose.connect(process.env.DB, {
 			socketTimeoutMS: 30000, // 30 seconds
 			connectTimeoutMS: 30000, // 30 seconds
 			// ... other options
@@ -20,5 +20,5 @@ module.exports = () => {
 		console.log(error);
 		console.log("Could not connect database!");
 	}
-	mongoose.set('strictQuery',false)
+	
 };
