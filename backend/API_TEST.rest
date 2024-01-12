@@ -1,0 +1,42 @@
+###
+
+POST http://localhost:5000/api/Customerauth/forgotpassword
+Content-Type: application/json
+
+{
+  "email": "rahulcv447@gmail.com"
+  
+}
+
+###
+PUT http://localhost:5000/api/Customerauth/updatepassword 
+Content-Type: application/json
+
+{
+  "email": "rahulcv447@gmail.com",
+  "password":"Rahul@1234",
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTQxMDkzYTkzN2JhZjljMmRjODI0NjAiLCJpYXQiOjE3MDA0MTIzOTksImV4cCI6MTcwMDQxNTk5OX0.NecDK1nz8n3_ZzVtErx-mbm5V_z-cgD1O5lDNk65MIY"
+  
+}
+
+###
+POST http://localhost:5000/api/useCoupon
+Content-Type: application/json
+
+{
+  "customerId": "customer127",
+  "name": "John Doe",
+  "couponCode": "TEST500",
+  "finalProductPrice": 200
+}
+
+
+###
+POST http://localhost:5000/api/submit-newsletter
+Content-Type: application/json
+
+{
+  "userName": "Akshay",
+  "email": "rahulcv448@gmail.com"
+  
+}
