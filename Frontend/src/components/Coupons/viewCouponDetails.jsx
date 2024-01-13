@@ -36,7 +36,7 @@ const ViewCoupons = () => {
             };
 
             // Send a GET request with the filter parameters
-            const response = await axios.get('http://localhost:5000/api/GetAllCoupons', {
+            const response = await axios.get('https://admin.myplantstore.me/api/GetAllCoupons', {
                 params: filters,
             });
 
@@ -61,7 +61,7 @@ const ViewCoupons = () => {
             };
 
             // Send a GET request with the filter parameters
-            const response = await axios.get('http://localhost:5000/api/GetAllCoupons', {
+            const response = await axios.get('https://admin.myplantstore.me/api/GetAllCoupons', {
                 params: filters,
             });
 

@@ -240,15 +240,15 @@ router.post('/useCoupon', async (req, res) => {
 
     // Check if the coupon has already been used by the customer for single-use coupons
     if (coupon.usage === 'Single') {
-      const usedCoupon = await CouponUsage.findOne({ couponCode });
+      const usedCoupon = await CouponUsage.findOne({ couponCode, customerId });
       if (usedCoupon) {
         return res.status(400).send({ error: 'Coupon has already been used.' });
       }
     } else if (coupon.usage === 'Multiple') {
       // Check if the coupon has already been used by this customer
-      const usedCoupon = await CouponUsage.findOne({ couponCode, customerId });
+      const usedCoupon = await CouponUsage.findOne();
       if (usedCoupon) {
-        return res.status(400).send({ error: 'Coupon has already been used by this customer.' });
+        return res.status(400).send({ error: 'Error for using coupon' });
       }
     }
 

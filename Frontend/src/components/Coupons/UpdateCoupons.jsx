@@ -29,7 +29,7 @@ const UpdateCoupons = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:5000/api/GetCoupon/${id}`);
+        const response = await axios.get(`https://admin.myplantstore.me/api/GetCoupon/${id}`);
         setCouponData(response.data);
       } catch (error) {
         console.error('Error fetching coupon details:', error);
@@ -43,7 +43,7 @@ const UpdateCoupons = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/UpdateCoupon/${id}`, couponData);
+      const response = await axios.put(`https://admin.myplantstore.me/api/UpdateCoupon/${id}`, couponData);
       toast.success('Coupon updated successfully');
       // You can redirect or perform other actions on success
     } catch (error) {
@@ -55,7 +55,7 @@ const UpdateCoupons = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this coupon?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/DeleteCoupon/${id}`);
+        await axios.delete(`https://admin.myplantstore.me/api/DeleteCoupon/${id}`);
         setIsDeleted(true);
         toast.success('Coupon deleted successfully');
         // Navigate to /viewCoupons
