@@ -147,8 +147,15 @@ const Sidebar = () => {
 
           <Link to="/FeatureLevel" style={{ textDecoration: "none" }}>
             <li>
-              <BannersIcon className="icon" style={{ fontSize: "14px" }} />
+              <StoreIcon className="icon" style={{ fontSize: "14px" }} />
               <span>Feature Level</span>
+            </li>
+          </Link>
+
+          <Link to="/CouponManagement" style={{ textDecoration: "none" }}>
+            <li>
+              <SettingsIcon className="icon" style={{ fontSize: "14px" }} />
+              <span>Coustomer Management</span>
             </li>
           </Link>
 

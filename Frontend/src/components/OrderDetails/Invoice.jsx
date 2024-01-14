@@ -170,12 +170,13 @@ const PrintPage = ({ intent }) => {
     pdf.setTextColor(0, 0, 0); // Reset text color to black
 
 
-    const subtotal = 100; // Replace with actual subtotal value
-    const vat = 0; // Replace with actual VAT value
-    const grandTotal = Gamount + vat; // Replace with actual total value
+    const subtotal = 100; 
+    const vatp=5;// Replace with actual subtotal value
+    const vat = (Gamount*5)/100; // Replace with actual VAT value
+    const grandTotal = Gamount ; // Replace with actual total value
     const finalt = Final + vat
     pdf.text(`AED ${Gamount}`, pdf.internal.pageSize.width - 20, 213, { align: 'right' });
-    pdf.text(`AED ${vat}`, pdf.internal.pageSize.width - 20, 218, { align: 'right' });
+    pdf.text(`${vatp}%`, pdf.internal.pageSize.width - 20, 218, { align: 'right' });
     pdf.text(`AED ${grandTotal}`, pdf.internal.pageSize.width - 20, 223, { align: 'right' });
     const discountText = discountperc !== 0
   ? `${discountperc} %`
