@@ -41,6 +41,8 @@ import Refundlist from "./components/RefundForm/Refundlist";
 
 import Featurelevel from "./components/FeatureLevel/Featurelevel";
 import CouponManagement from "./components/Coupons/CouponManagement";
+import UpdateProductCategories from "./components/UpdateProductCategories/UpdateProductCategories";
+
 function App() {
   const { darkMode } = useContext(DarkModeContext);
   const user = localStorage.getItem("token");
@@ -61,6 +63,9 @@ function App() {
 
           {user && <Route path="/signup" exact element={<Signup />} />}
           <Route path="/signup" element={<Navigate replace to="/login" />} />
+
+          {user && <Route path="/UpdateProductCategories" exact element={<UpdateProductCategories />} />}
+          <Route path="/UpdateProductCategories" element={<Navigate replace to="/login" />} />
 
           {user && <Route path="/addCategory" element={<AddCategory />} />}
           <Route path="/addCategory" element={<Navigate replace to="/login" />} />

@@ -207,7 +207,7 @@ const ProductSelection = () => {
                 select
                 label="Select"
 
-                helperText="Please select SubCategory"
+                helperText="Please select Product"
                 style={{ paddingRight: '80px' }}
             >
                 {productDetails.map((option) => (

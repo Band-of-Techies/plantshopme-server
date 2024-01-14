@@ -104,6 +104,12 @@ const Sidebar = () => {
               <span>Product Stock</span>
             </li>
           </Link>
+          <Link to="/UpdateProductCategories" style={{ textDecoration: "none" }}>
+            <li>
+              <NotificationsIcon className="icon" />
+              <span>Product Categories</span>
+            </li>
+          </Link>
           <Link to="/orderdetails" style={{ textDecoration: "none" }}>
             <li>
               <OrderDetailsIcon className="icon" />
