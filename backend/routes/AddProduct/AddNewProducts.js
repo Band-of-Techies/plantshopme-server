@@ -68,10 +68,46 @@ router.get('/getProductDetails', async (req, res) => {
 
 
 
+// router.put('/updateCategories/:productId', async (req, res) => {
+//   try {
+//     const productId = req.params.productId;
+//     const { maincategory, category, subcategory } = req.body; // Updated the variable names
+
+//     // Find the document by _id
+//     const product = await Product.findById(productId);
+
+//     // Check if the product exists
+//     if (!product) {
+//       return res.status(404).json({ error: 'Product not found' });
+//     }
+
+//     // Update the fields
+//     if (maincategory) {
+//       product.maincategory = maincategory;
+//     }
+
+//     if (category) {
+//       product.category = category;
+//     }
+
+//     if (subcategory) {
+//       product.subcategory = subcategory;
+//     }
+
+//     // Save the changes
+//     await product.save();
+
+//     return res.json({ message: 'Product categories updated successfully' });
+//   } catch (error) {
+//     console.error('Error updating product categories:', error.message);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 router.put('/updateCategories/:productId', async (req, res) => {
   try {
     const productId = req.params.productId;
-    const { maincategory, category, subcategory } = req.body; // Updated the variable names
+    const { maincategory, category, subcategory } = req.body;
 
     // Find the document by _id
     const product = await Product.findById(productId);
@@ -82,15 +118,15 @@ router.put('/updateCategories/:productId', async (req, res) => {
     }
 
     // Update the fields
-    if (maincategory) {
+    if (maincategory !== undefined) {
       product.maincategory = maincategory;
     }
 
-    if (category) {
+    if (category !== undefined) {
       product.category = category;
     }
 
-    if (subcategory) {
+    if (subcategory !== undefined) {
       product.subcategory = subcategory;
     }
 

@@ -150,9 +150,9 @@ const UpdateProductCategories = () => {
       const response = await axios.put(
         `${process.env.REACT_APP_BASE_URL}/updateCategories/${productid}`,
         {
-          maincategory: [...mainCategory, ...selectedCategories],
-          category: [...category, ...selectedSubCategories],
-          subcategory: [...subcategory, ...selectedThirdCategories],
+          maincategory: [...selectedCategories],
+          category: [...selectedSubCategories],
+          subcategory: [...selectedThirdCategories],
         }
       );
   
