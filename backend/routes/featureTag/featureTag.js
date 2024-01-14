@@ -62,28 +62,56 @@ router.get('/getFeatures', async (req, res) => {
 // });
 
 
+// router.put('/updateFeatureLevel/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const { level } = req.body;
+// console.log(req.body);
+//   try {
+
+//     const existingLocation = await FeatureTag.findById(id);
+//     if (!existingLocation) {
+//       return res.status(404).json({ error: 'Feature not found' });
+//     }
+
+//     existingLocation.level = level;
+   
+    
+//     const updatedLocation = await existingLocation.save();
+//     console.log(updatedLocation);
+//     res.status(200).json(updatedLocation);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 router.put('/updateFeatureLevel/:id', async (req, res) => {
   const { id } = req.params;
   const { level } = req.body;
-console.log(req.body);
-  try {
 
-    const existingLocation = await FeatureTag.findById(id);
-    if (!existingLocation) {
+  try {
+    const existingFeature = await FeatureTag.findById(id);
+
+    if (!existingFeature) {
       return res.status(404).json({ error: 'Feature not found' });
     }
 
-    existingLocation.level = level;
-   
-    
-    const updatedLocation = await existingLocation.save();
-    console.log(updatedLocation);
-    res.status(200).json(updatedLocation);
+    const existingFeatureWithSameLevel = await FeatureTag.findOne({ level, _id: { $ne: id } });
+
+    if (existingFeatureWithSameLevel) {
+      // Another feature with the same level exists, update its level to the previous level
+      existingFeatureWithSameLevel.level = existingFeature.level;
+      await existingFeatureWithSameLevel.save();
+    }
+
+    existingFeature.level = level;
+    const updatedFeature = await existingFeature.save();
+
+    res.status(200).json(updatedFeature);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 module.exports = router;

@@ -60,6 +60,43 @@ router.get('/couponsAndCoins/:id', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+
+
+
+  router.get('/CouponUser', async (req, res) => {
+    try {
+      const { id, name } = req.query;
+  
+      let user;
+  
+      if (id) {
+        // If id is provided, try to find the user in both collections by _id
+        user = await User.findById(id) || await GoogleUser.findById(id);
+      } else if (name) {
+        // If name is provided, try to find the user in both collections by name
+        user = await User.findOne({ name }) || await GoogleUser.findOne({ name });
+      } else {
+        // If neither id nor name is provided, retrieve all users from both collections
+        const allUsers = await Promise.all([User.find(), GoogleUser.find()]);
+        const users = allUsers.flat().map(user => ({ _id: user._id, redeemCoupon: user.redeemCoupon, coins: user.coins }));
+        return res.status(200).json(users);
+      }
+  
+      if (!user) {
+        console.log(`User with ID or name ${id || name} not found.`);
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Rest of your logic to fetch and process coins and coupons
+      // Modify the response accordingly
+  
+      res.status(200).json({ _id: user._id, redeemCoupon: user.redeemCoupon, coins: user.coins });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
   
 
 module.exports = router;
