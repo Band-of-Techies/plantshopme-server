@@ -25,6 +25,8 @@
     "moment": "^2.29.4",
     "react": "^17.0.2",
     "react-circular-progressbar": "^2.0.4",
+    "react-dnd": "^11.0.0",
+    "react-dnd-html5-backend": "^11.0.0",
     "react-dom": "^17.0.2",
     "react-dropzone": "^14.2.3",
     "react-icons": "^4.12.0",
@@ -41,14 +43,12 @@
     "swiper": "^10.3.0",
     "web-vitals": "^2.1.4"
   },
- 
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  
   "eslintConfig": {
     "extends": [
       "react-app",

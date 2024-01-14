@@ -33,4 +33,57 @@ router.get('/getFeatures', async (req, res) => {
   });
   
 
+
+
+// Route to update the level based on _id
+// router.put('/updateFeatureLevel/:id', async (req, res) => {
+//   const { id } = req.params;
+//   const { level } = req.body;
+
+//   try {
+//     // Find the document by _id
+//     const feature = await FeaturTag.findById(id);
+
+//     if (!feature) {
+//       return res.status(404).json({ error: 'Feature not found' });
+//     }
+
+//     // Update the level with the provided value
+//     feature.level = String(level);
+
+//     // Save the updated document
+//     await feature.save();
+
+//     res.json({ message: 'Feature level updated successfully', feature });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+
+router.put('/updateFeatureLevel/:id', async (req, res) => {
+  const { id } = req.params;
+  const { level } = req.body;
+console.log(req.body);
+  try {
+
+    const existingLocation = await FeatureTag.findById(id);
+    if (!existingLocation) {
+      return res.status(404).json({ error: 'Feature not found' });
+    }
+
+    existingLocation.level = level;
+   
+    
+    const updatedLocation = await existingLocation.save();
+    console.log(updatedLocation);
+    res.status(200).json(updatedLocation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 module.exports = router;

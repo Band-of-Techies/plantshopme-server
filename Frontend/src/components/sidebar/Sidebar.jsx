@@ -145,6 +145,13 @@ const Sidebar = () => {
             </li>
           </Link>
 
+          <Link to="/FeatureLevel" style={{ textDecoration: "none" }}>
+            <li>
+              <BannersIcon className="icon" style={{ fontSize: "14px" }} />
+              <span>Feature Level</span>
+            </li>
+          </Link>
+
           <Link to="/newsletter" style={{ textDecoration: "none" }}>
             <li>
               <NewsLetterIcon className="icon" style={{ fontSize: "14px" }} />

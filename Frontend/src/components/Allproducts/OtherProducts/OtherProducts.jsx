@@ -601,17 +601,17 @@ const OtherProducts = () => {
 
 
 
-    const Carename = [
-        {
-            value: 'Seed Care',
-            label: 'Seed Care',
-        },
-        {
-            value: 'Plant Care',
-            label: 'Plant Care',
-        },
+    // const Carename = [
+    //     {
+    //         value: 'Seed Care',
+    //         label: 'Seed Care',
+    //     },
+    //     {
+    //         value: 'Plant Care',
+    //         label: 'Plant Care',
+    //     },
 
-    ];
+    // ];
 
     //feature tag
     const handleOpenDialog = () => {
@@ -745,7 +745,7 @@ const OtherProducts = () => {
                     length: selectedLengthNames,
                     Pots: selectedPotsNames,
                     careName: plantcareData.name,
-                    careType: careType,
+                    careType: 'plant',
                     caredes: plantcareData.description,
                     price: productprice,
                     currency: SelectedCurrency1,
@@ -1829,30 +1829,15 @@ const OtherProducts = () => {
 
 
                         <div className='plant-care-div'>
+                        <span>Product Care</span>
                             <div className='form'>
-                                <div className='care-type-div'>
-                                    <span>Care Type</span>
-                                    <TextField
-                                        id="outlined-select-currency"
-                                        select
-                                        style={{ minWidth: '340px' }}
-
-                                        width="150px"
-                                        color="success"
-                                        onChange={(e) => setCareType(e.target.value)}
-                                    >
-                                        {Carename.map((option) => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                </div>
+                           
                                 <div className='plantcares-div'>
+                                
                                     <TextField
                                         id="outlined-select-currency"
                                         select
-                                        style={{ paddingLeft: '10px', minWidth: '340px' }} // Adjust the width as needed
+                                        style={{ paddingLeft: '0px', minWidth: '340px' }} // Adjust the width as needed
                                         value={selectedPlantcare}
                                         color="success"
                                         onChange={handleDropdownChange}

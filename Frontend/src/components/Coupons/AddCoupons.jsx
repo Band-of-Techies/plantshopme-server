@@ -21,11 +21,21 @@ const AddCoupons = () => {
     startDate: currentDate,
     endDate: currentDate,
     minvalue: 0, // Added minvalue
+    Exclusive: '',
   });
 
   const handleChange = (e) => {
-    setCouponData({ ...couponData, [e.target.name]: e.target.value });
+    if (e.target.name === 'Exclusive') {
+      // If the checkbox is changed, set Exclusive to 'True' if checked, and 'False' if unchecked
+      setCouponData({ ...couponData, Exclusive: e.target.checked ? 'True' : 'False' });
+    } else {
+      // Otherwise, update the state as usual
+      setCouponData({ ...couponData, [e.target.name]: e.target.value });
+    }
   };
+  
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,6 +56,7 @@ const AddCoupons = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className='single'>
@@ -72,6 +83,15 @@ const AddCoupons = () => {
                 value={couponData.code}
                 onChange={handleChange}
               />
+              <div style={{padding:'10px', backgroundColor:'#b3ffb3',}}>
+              <label style={{ marginLeft: '10px',marginTop:'10px' }}>Exclusive</label>
+              <input
+  type="checkbox"
+  name="Exclusive"  // Corrected to match the state property
+  onChange={handleChange}
+/>
+</div>
+
               <TextField
                 select
                 label="Type"

@@ -34,6 +34,11 @@ const couponSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  Exclusive: {
+    type: String,
+    default:false
+    
+  },
 });
 
 const Coupon = mongoose.model('Coupon', couponSchema);
