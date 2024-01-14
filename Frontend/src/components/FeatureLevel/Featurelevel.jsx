@@ -68,34 +68,40 @@ const Featurelevel = () => {
           <Navbar />
         <Wrapper>
           <div>
-            {featureLevels.map(({ _id, name, level, isEditing }, index) => (
-              <Box key={_id}>
-                <div>{name}</div>
-  
-                {isEditing ? (
-                  <TextField
-                    type="number"
-                    size="small"
-                    label="New Level"
-                    variant="outlined"
-                    value={level}
-                    onChange={(e) => setFeatureLevels((prevLevels) => prevLevels.map((prevLevel, i) => (i === index ? { ...prevLevel, level: e.target.value } : prevLevel)))}
-                  />
-                ) : (
-                  <div>{`Level: ${level}`}</div>
-                )}
-  
-                <Button variant="outlined" color="primary" onClick={() => handleEditToggle(index)}>
-                  {isEditing ? 'Cancel' : 'Edit'}
-                </Button>
-  
-                {isEditing && (
-                  <Button variant="outlined" color="primary" onClick={() => handleLevelUpdate(_id)}>
-                    Update
-                  </Button>
-                )}
-              </Box>
-            ))}
+          {featureLevels.map(({ _id, name, level, isEditing }, index) => (
+  <Box key={_id} style={{ marginBottom: '10px', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{ flex: '1' }}>
+      <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{name}</div>
+
+      {isEditing ? (
+        <TextField
+          type="number"
+          size="small"
+          label="New Level"
+          variant="outlined"
+          value={level}
+          onChange={(e) => setFeatureLevels((prevLevels) => prevLevels.map((prevLevel, i) => (i === index ? { ...prevLevel, level: e.target.value } : prevLevel)))}
+          style={{ marginTop: '8px' }}
+        />
+      ) : (
+        <div style={{ marginTop: '8px' }}>{`Level: ${level}`}</div>
+      )}
+    </div>
+
+    <div style={{ marginLeft: '10px' }}>
+      <Button variant="outlined" color="primary" onClick={() => handleEditToggle(index)}>
+        {isEditing ? 'Cancel' : 'Edit'}
+      </Button>
+
+      {isEditing && (
+        <Button variant="outlined" color="primary" onClick={() => handleLevelUpdate(_id)}>
+          Update
+        </Button>
+      )}
+    </div>
+  </Box>
+))}
+
           </div>
           <ToastContainer />
         </Wrapper>

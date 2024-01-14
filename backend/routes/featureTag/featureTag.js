@@ -20,18 +20,32 @@ router.post('/addFeature', async (req, res) => {
   }
 });
 
+// router.get('/getFeatures', async (req, res) => {
+//     try {
+//       // Fetch all feature names from the database
+//       const features = await FeatureTag.find();
+  
+//       res.status(200).json(features);
+//     } catch (error) {
+//       console.error('Error fetching feature names:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//   });
+  
 router.get('/getFeatures', async (req, res) => {
-    try {
-      // Fetch all feature names from the database
-      const features = await FeatureTag.find();
-  
-      res.status(200).json(features);
-    } catch (error) {
-      console.error('Error fetching feature names:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  });
-  
+  try {
+    // Fetch all feature names from the database
+    const features = await FeatureTag.find();
+
+    // Sort features array in ascending order based on the level property
+    const sortedFeatures = features.sort((a, b) => parseInt(a.level) - parseInt(b.level));
+
+    res.status(200).json(sortedFeatures);
+  } catch (error) {
+    console.error('Error fetching feature names:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
