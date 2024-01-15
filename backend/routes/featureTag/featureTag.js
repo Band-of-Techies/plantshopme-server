@@ -46,6 +46,23 @@ router.get('/getFeatures', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+const axios = require('axios');
+
+router.get('/insurance-expiration', async (req, res) => {
+  try {
+    const apiUrl = 'http://13.127.164.205/api/InsuranceExpFilterNotification';
+    const response = await axios.get(apiUrl);
+    const responseData = response.data;
+
+    // You can modify the response or process the data as needed before sending it to the client
+    res.status(200).json(responseData);
+    console.log(response.data);
+  } catch (error) {
+    console.error('Error making API request:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 

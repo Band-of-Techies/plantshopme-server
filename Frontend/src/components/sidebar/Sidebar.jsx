@@ -171,23 +171,23 @@ const Sidebar = () => {
               <span>News Letter</span>
             </li>
           </Link>
-          <Link to="/signup" style={{ textDecoration: "none" }}>
+          {/* <Link to="/signup" style={{ textDecoration: "none" }}>
             <li>
               <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
               <span>signup</span>
             </li>
           </Link>
-          <p className="title">USER</p>
+          <p className="title">USER</p> */}
           {/* <li>
             <AccountCircleIcon className="icon" />
             <span>Profile</span>
           </li> */}
-          <Link to="/login" style={{ textDecoration: "none" }} onClick={handleLogout}>
+          {/* <Link to="/login" style={{ textDecoration: "none" }} onClick={handleLogout}>
             <li>
               <ExitToAppIcon className="icon" style={{ fontSize: "14px" }} />
               <span>Logout</span>
             </li>
-          </Link>
+          </Link> */}
         </ul>
       </div>
       {/* <div className="bottom">

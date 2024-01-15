@@ -11,9 +11,25 @@ import { useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { getTitle } from "./checkurl";
 
+import { Link } from "react-router-dom";
+
+import {
+ 
+  ExitToApp as ExitToAppIcon,
+
+  ExitToApp  as SignInIcon,
+  PersonAdd as SignUpIconFilled,
+  
+} from "@mui/icons-material";
+
 const Navbar = () => {
   const location = useLocation();
   const [title, setTitle] = useState(''); 
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
   
   useEffect(() => {
     const path = location.pathname.split("/")[1];
@@ -31,9 +47,19 @@ const Navbar = () => {
           <SearchOutlinedIcon />
         </div>
         <div className="items">
-          <div className="item">
-            <LanguageOutlinedIcon className="icon" />
-            English
+          <div className="item"  >
+          <Link to="/login" style={{ textDecoration: "none" ,paddingRight:'10px' }} onClick={handleLogout}>
+            <li>
+              <ExitToAppIcon className="icon" style={{ fontSize: "14px", color: '#228f47' }} />
+              <span>Logout</span>
+            </li>
+          </Link>
+          <Link to="/signup" style={{ textDecoration: "none" }}>
+            <li>
+              <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
+              <span>signup</span>
+            </li>
+          </Link>
           </div>
           {/* <div className="item">
             <DarkModeOutlinedIcon
