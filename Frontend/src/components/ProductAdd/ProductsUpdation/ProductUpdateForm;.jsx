@@ -4,7 +4,7 @@ import Dropzone from 'react-dropzone';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, CircularProgress } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, CircularProgress,Select } from '@mui/material';
 import ProductImageUpdation from './ProductImageUpdation';
 import { useParams, useNavigate } from 'react-router-dom';
 import Dimensions from '../../Allproducts/OtherProducts/Dimensions';
@@ -30,6 +30,7 @@ const ProductUpdateForm = () => {
   useEffect(() => {
     setContentVisible(false);
     handleRefresh();
+    fetchFeatureNames();
   }, []);
 
   const { _Id, title } = useParams();
@@ -488,7 +489,27 @@ const handleimpdescriptionchange =(e)=>{
       }
     }
   };
+  const [selectedFeature, setSelectedFeature] = useState('');
+  const [featureNames, setFeatureNames] = useState([]);
+  const fetchFeatureNames = () => {
+    axios.get(`${process.env.REACT_APP_BASE_URL}/getFeatures`)
+        .then((response) => {
+            // Filter out duplicates and null values
+            const uniqueFeatureNames = response.data
+                .filter((name, index, self) => self.indexOf(name) === index && name !== null);
 
+           // Set the initial value to the first feature name
+        if (uniqueFeatureNames.length > 0) {
+          setSelectedFeature(uniqueFeatureNames[0]);
+        }
+
+            // Convert the Set to an array for rendering
+            setFeatureNames([...uniqueFeatureNames]);
+        })
+        .catch((error) => {
+            // toast.error('Error fetching feature names:', error);
+        });
+};
 
 
   return (
@@ -603,18 +624,29 @@ const handleimpdescriptionchange =(e)=>{
                 <div style={{ paddingTop: '10px', marginTop: '10px' }}>
                   <h3 style={{ marginTop: '5px' }}>Feature Tags</h3>
                   {featureTags.map((tag, index) => (
-                    <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-                      <TextField
-                        label={`Tag ${index + 1}`}
-                        value={tag}
-                        onChange={(e) => handleFeatureTagChange(index, e.target.value)}
-                        style={{ width: '70%', marginRight: '10px' }}
-                      />
-                      <IconButton color="secondary" onClick={() => handleRemoveFeatureTag(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  ))}
+        <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+          <Select
+            label={`Tag ${index + 1}`}
+            value={tag}
+            onChange={(e) => {
+              const selectedValue = e.target.value;
+              const selectedObject = featureNames.find(feature => feature.name === selectedValue);
+              setSelectedFeature(selectedObject);
+              handleFeatureTagChange(index, selectedValue);
+            }}
+            style={{ width: '70%', marginRight: '10px' }}
+          >
+            {featureNames.map((feature, nameIndex) => (
+              <MenuItem key={nameIndex} value={feature.name}>
+                {feature.name}
+              </MenuItem>
+            ))}
+          </Select>
+          <IconButton color="secondary" onClick={() => handleRemoveFeatureTag(index)}>
+            {/* Your icon component (DeleteIcon) */}<DeleteIcon/>
+          </IconButton>
+        </div>
+      ))}
                   <Button variant="contained" color="success" onClick={handleAddFeatureTag}>
                     Add Feature Tag
                   </Button>
