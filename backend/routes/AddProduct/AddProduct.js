@@ -105,7 +105,7 @@ router.post('/addOtherProduct',  upload.fields([
 //fetch all products based on the all the parameters which is called by the frontend
 router.get('/getAllProducts', async (req, res) => {
   const { search, maincategory, category, subcategory, sort, FeatureTag, max_price, min_price } = req.query;
-
+  console.log(FeatureTag);
   let queryArray = [];
   
   if (maincategory && maincategory !== 'all' && (!category || category === 'all') && (!subcategory || subcategory === 'all')) {
@@ -122,6 +122,11 @@ router.get('/getAllProducts', async (req, res) => {
     const subCategoryArray = subcategory.split(',');
     queryArray.push({ subcategory: { $in: subCategoryArray } });
   }
+  if (FeatureTag && FeatureTag !== 'all') {
+    const FeatureTagArray = FeatureTag.split(',');
+    queryArray.push({ FeatureTag: { $in: FeatureTagArray } });
+  }
+  
   
   let queryObject = {};
   if (queryArray.length > 0) {
@@ -131,13 +136,14 @@ router.get('/getAllProducts', async (req, res) => {
   if (search) {
     queryObject.$or = [
       { title: { $regex: search, $options: 'i' } },
-      { description: { $regex: search, $options: 'i' } }
+      { description: { $regex: search, $options: 'i' } },
+      { SKU: { $regex: search, $options: 'i' } },
+      { scienticName: { $regex: search, $options: 'i' } },
+      // { FeatureTag: { $regex: search, $options: 'i' } },
+
     ];
   }
   
-  if (FeatureTag && FeatureTag !== 'all') {
-    queryObject.FeatureTag = FeatureTag;
-  }
   
   let result = Product.find(queryObject);
 

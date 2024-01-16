@@ -42,23 +42,21 @@ const Navbar = () => {
         <div>
         <p className="heading">{title}</p> 
         </div>
-        <div className="search">
+        {/* <div className="search">
           <input type="text" placeholder="Search..." />
           <SearchOutlinedIcon />
-        </div>
+        </div> */}
         <div className="items">
-          <div className="item"  >
-          <Link to="/login" style={{ textDecoration: "none" ,paddingRight:'10px' }} onClick={handleLogout}>
-            <li>
-              <ExitToAppIcon className="icon" style={{ fontSize: "14px", color: '#228f47' }} />
+          <div className="item red"  >
+          <Link to="/login" onClick={handleLogout}>
+              <ExitToAppIcon className="icon" style={{ fontSize: "14px"}} />
               <span>Logout</span>
-            </li>
           </Link>
-          <Link to="/signup" style={{ textDecoration: "none" }}>
-            <li>
+          </div>
+          <div className="item blue"  >
+          <Link to="/signup">
               <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
-              <span>signup</span>
-            </li>
+              <span>Signup</span>
           </Link>
           </div>
           {/* <div className="item">

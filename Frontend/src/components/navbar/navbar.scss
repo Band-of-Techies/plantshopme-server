@@ -43,6 +43,41 @@
   padding:0.25rem .75rem;
   border-radius:5px;
 }
+.blue{
+  background:#CDF5FD;
+  padding:0.25rem .75rem;
+  border-radius:5px;
+  font-weight: bold;
+  font-size:14px;
+  a{
+    color:#3081D0;
+  }
+  .icon{
+    color:#3081D0;
+  }
+}
+.blue:hover{
+  .icon,a{
+    color:#1a538d;
+    transition: all 0.2s;
+  }
+}
+.red{
+  background:#FAD4D4;
+  padding:0.25rem .75rem;
+  border-radius:5px;
+  font-weight: bold;
+  font-size:14px;
+  .icon,a{
+    color:#d34539;
+  }
+}
+.red:hover{
+  .icon,a{
+    color:#C51605;
+    transition: all 0.2s;
+  }
+}
     .items {
       display: flex;
       align-items: center;
@@ -53,12 +88,17 @@
         margin-right: 20px;
         position: relative;
         margin-left: auto;
-
+        justify-content:center;
         .icon {
           font-size: 20px;
-          color: #228f47;
         }
-
+        a{
+          display: flex;
+          justify-content:center;
+          align-items: center;
+          gap:0.25rem;
+          text-decoration: none;
+        }
         .avatar {
           width: 30px;
           height: 30px;

@@ -161,7 +161,7 @@ const Sidebar = () => {
           <Link to="/CouponManagement" style={{ textDecoration: "none" }}>
             <li>
               <SettingsIcon className="icon" style={{ fontSize: "14px" }} />
-              <span>Coustomer Management</span>
+              <span>Customer Management</span>
             </li>
           </Link>
 

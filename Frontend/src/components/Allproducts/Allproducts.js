@@ -20,10 +20,11 @@ const Allproducts = () => {
     const[level1 ,setLevel1] = useState([])
     const[level2 ,setLevel2] = useState([])
     const[level3 ,setLevel3] = useState([])
+    const[level4 ,setLevel4] = useState([])
     const [searchName ,setSearchName] = useState('mainCategory')
     const defaultInitialState = {
       search: " ",
-      mainCategory: "all",
+      mainCategory: "",
       category: "",
       subCategory: "",
       sort: "",
@@ -31,6 +32,7 @@ const Allproducts = () => {
       min_price: "",
       price: "",
       page: 1,
+      featureTag:""
     };
     const [initialState, setInitialState] = useState(defaultInitialState);
     const [isDelete,setIsDelete] =useState(false)
@@ -38,7 +40,7 @@ const Allproducts = () => {
    
    const getProducts = async()=>{
     setLoading(true);
-    let url=`${process.env.REACT_APP_BASE_URL}/getAllProducts?maincategory=${encodeURIComponent(initialState.mainCategory)}&category=${encodeURIComponent(initialState.category)}&subcategory=${encodeURIComponent(initialState.subCategory)}&sort=${initialState.sort}&FeatureTag=all&page=${initialState.page}&min_price=${initialState.min_price}&max_price=${initialState.max_price}`;
+    let url=`${process.env.REACT_APP_BASE_URL}/getAllProducts?maincategory=${encodeURIComponent(initialState.mainCategory)}&category=${encodeURIComponent(initialState.category)}&subcategory=${encodeURIComponent(initialState.subCategory)}&sort=${initialState.sort}&page=${initialState.page}&min_price=${initialState.min_price}&max_price=${initialState.max_price}&FeatureTag=${initialState.featureTag}`;
    
     if(initialState.search){
       url =url + `&search=${initialState.search}`
@@ -60,8 +62,19 @@ const Allproducts = () => {
    useEffect(()=>{
     getProducts()
 
-   },[initialState.category,initialState.subCategory,initialState.mainCategory,initialState.search,initialState.page,isDelete])
+   },[initialState.category,initialState.subCategory,initialState.mainCategory,initialState.search,initialState.page,isDelete,initialState.featureTag])
 
+  const fetchFeatureTag = async()=>{
+    try {
+      // getFeatures
+      const resp = await axios.get(`${process.env.REACT_APP_BASE_URL}/getFeatures`)
+      setLevel4(resp.data);
+      return
+    } catch (error) {
+      return error
+    }
+  }
+  
    useEffect(() => {
     const fetchData = async () => {
       try {
@@ -74,10 +87,10 @@ const Allproducts = () => {
         setLevel2(data.level2);
         setLevel3(data.level3);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        // console.error('Error fetching data:', error);
       }
     };
-  
+    fetchFeatureTag()
     fetchData();
   }, []); // Empty dependency array ensures that this effect runs only once, similar to componentDidMount
   
@@ -87,7 +100,10 @@ const Allproducts = () => {
     subOption = level1;
   } else if (searchName === 'category') {
     subOption = level2;
-  } else {
+  }else if (searchName === 'FeatureTag'){
+    subOption = level4;
+  }
+   else {
     subOption = level3;
   }
   
@@ -96,6 +112,7 @@ const Allproducts = () => {
     { value: 'mainCategory', label: 'mainCategory' },
     { value: 'category', label: 'category' },
     { value: 'subCategory', label: 'subCategory' },
+    { value: 'FeatureTag', label: 'FeatureTag' },
   ];
 
 
@@ -133,7 +150,6 @@ const handleNext = (prop) => {
 const handleSelectInput = (selectedValue) => {
   setSearchName(selectedValue)
 };
-
 
 
   const customStyles = {
@@ -195,15 +211,58 @@ const handleSelectInput = (selectedValue) => {
   const handleSelectChange = (prop) => {
     setSelectedOption(prop);
     if (searchName === 'mainCategory') {
-      initialState.mainCategory = prop.label;
-      setInitialState((prevState) => ({ ...prevState, mainCategory: prop.label }));
+      setInitialState((prevState) => ({
+        ...prevState,
+        mainCategory: prop.label,
+        category: defaultInitialState.category,
+        subCategory: defaultInitialState.subCategory,
+        sort: defaultInitialState.sort,
+        max_price: defaultInitialState.max_price,
+        min_price: defaultInitialState.min_price,
+        price: defaultInitialState.price,
+        page: defaultInitialState.page,
+        featureTag: defaultInitialState.featureTag
+      }));
+
     } else if (searchName === 'category') {
-  
-      initialState.category = prop.label;
-      setInitialState((prevState) => ({ ...prevState, category: prop.label }));
+      setInitialState((prevState) => ({
+        ...prevState,
+        category: prop.label,
+        mainCategory: defaultInitialState.mainCategory,
+        subCategory: defaultInitialState.subCategory,
+        sort: defaultInitialState.sort,
+        max_price: defaultInitialState.max_price,
+        min_price: defaultInitialState.min_price,
+        price: defaultInitialState.price,
+        page: defaultInitialState.page,
+        featureTag: defaultInitialState.featureTag
+      }));
+    } else if (searchName === 'FeatureTag') {
+      setInitialState((prevState) => ({
+        ...prevState,
+        featureTag: prop.label,
+        mainCategory: defaultInitialState.mainCategory,
+        category: defaultInitialState.category,
+        subCategory: defaultInitialState.subCategory,
+        sort: defaultInitialState.sort,
+        max_price: defaultInitialState.max_price,
+        min_price: defaultInitialState.min_price,
+        price: defaultInitialState.price,
+        page: defaultInitialState.page
+      }));
     } else {
-      initialState.subCategory = prop.label;
-      setInitialState((prevState) => ({ ...prevState, subCategory: prop.label }));
+      setInitialState((prevState) => ({
+        ...prevState,
+        subCategory: prop.label,
+        mainCategory: defaultInitialState.mainCategory,
+        category: defaultInitialState.category,
+        sort: defaultInitialState.sort,
+        max_price: defaultInitialState.max_price,
+        min_price: defaultInitialState.min_price,
+        price: defaultInitialState.price,
+        page: defaultInitialState.page,
+        featureTag: defaultInitialState.featureTag
+      }));
     }
   };
 
@@ -246,13 +305,10 @@ const handleSelectInput = (selectedValue) => {
         value={selectedOption}
         onChange={handleSelectChange}
         options={subOption && subOption.map((item) => ({
-          value: item.id,
+          value: item.id ? item.id : item.level ,
           label: item.name
         }))}
       />
-
-
-
 
       <button className='search-btn' onClick={handleReset}>Reset</button>
       <div className='count-div'><span>Products count</span><p className='count'>{productCount}</p></div>
@@ -298,7 +354,7 @@ export default Allproducts
 
 const MainWrapper =styled.section`
 background:#F5F7F8;
-min-height:80vh;
+min-height:110vh;
 margin:0;
 padding:2rem 0rem;
 `

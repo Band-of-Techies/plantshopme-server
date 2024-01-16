@@ -17,7 +17,7 @@ export const getTitle = (prop) => {
         case 'updateProduct':
             return 'Update Product';
         case 'addBlog':
-            return 'Add Blog';
+            return 'Blogs';
         case 'blogs':
             return 'Blogs';
         case 'offerBanners':
@@ -29,9 +29,17 @@ export const getTitle = (prop) => {
         case 'Addcoupons':
             return 'Coupons';
         case 'otherproducts':
-            return 'Other Products';
+            return 'Add Products';
         case 'newsletter':
             return 'News Letter';
+        case 'Refundlist':
+            return 'Refund List';
+        case 'UpdateProductCategories':
+            return 'Update Categories';
+        case 'FeatureLevel':
+            return 'FeatureTag Level';
+        case 'CouponManagement':
+            return 'Customer Management';
         default:
             return 'Dashboard';
     }

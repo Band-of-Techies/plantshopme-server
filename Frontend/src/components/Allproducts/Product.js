@@ -73,8 +73,8 @@ const Wrapper = styled.div`
   flex-direction: column;
   margin-bottom: 2rem;
   img {
-    max-width: 220px;
-    min-width: 220px;
+    width: 216px;
+    height:260px;
   }
   p {
     width: 85%;
