@@ -376,8 +376,10 @@ mongoose.connect('mongodb+srv://myplantstore11:CBhv18MmYmhbXwOv@myplantstore.1f9
 });
 
 const coinTransactionSchema = new mongoose.Schema({
-  amount: { type: Number, required: true },
+  coins: { type: Number, required: true },
   lastAddedAt: { type: Date, default: Date.now },
+  orderId:{type:String },
+	valid:{type:Boolean,default:false},
 });
 
 const couponTransactionSchema = new mongoose.Schema({

@@ -127,7 +127,7 @@ const handleNext = (prop) => {
     newPageNo = pageNo + 1;
   } else if (prop === 'prev' && initialState.page > 1) {
     newPageNo = pageNo - 1;
-  } else {
+  } else if (!isNaN(prop)) {
     newPageNo = prop;
   }
 

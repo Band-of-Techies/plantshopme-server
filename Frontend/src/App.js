@@ -42,6 +42,7 @@ import Refundlist from "./components/RefundForm/Refundlist";
 import Featurelevel from "./components/FeatureLevel/Featurelevel";
 import CouponManagement from "./components/Coupons/CouponManagement";
 import UpdateProductCategories from "./components/UpdateProductCategories/UpdateProductCategories";
+import User from "./components/Coupons/User";
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -57,6 +58,9 @@ function App() {
 
           {user && <Route path="/CouponManagement" exact element={<CouponManagement />} />}
           <Route path="/CouponManagement" element={<Navigate replace to="/login" />} />
+
+          {user && <Route path="/CouponManagement/:id" exact element={<User/>} />}
+          <Route path="/CouponManagement/:id" element={<Navigate replace to="/login" />} />
 
           {user && <Route path="/FeatureLevel" exact element={<Featurelevel />} />}
           <Route path="/FeatureLevel" element={<Navigate replace to="/login" />} />

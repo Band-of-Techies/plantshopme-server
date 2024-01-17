@@ -112,6 +112,7 @@ const addnewproducts=require('./routes/AddProduct/AddNewProducts')
 
 const coinsRouter = require('./routes/Coins/coinsAndCoupons')
 
+const getCustomerDataRoute = require('./routes/getCustomerData/getCustomer')
 
 // Database connection
 
@@ -151,7 +152,7 @@ app.use("/api",newsletterRouter)
 app.use("/api",dimensionRoute);
 app.use("/api",coinsRouter)
 app.use("/api",dashboardrouter)
-
+app.use("/api",getCustomerDataRoute)
 
 
 app.use("/api",addnewproducts)

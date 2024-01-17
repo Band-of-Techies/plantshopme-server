@@ -1,5 +1,5 @@
 const { User} = require("../../models/Token/customer");
-const {GoogleUser} = require("../../passport")
+const {User : GoogleUser} = require("../../passport")
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
@@ -17,7 +17,7 @@ router.get('/couponsAndCoins/:id', async (req, res) => {
         user = await GoogleUser.findById(id);
   
         if (!user) {
-          console.log(`User with ID ${id} not found in either collection.`);
+          // console.log(`User with ID ${id} not found in either collection.`);
           return res.status(404).json({ error: 'User not found' });
         }
       }
@@ -61,6 +61,43 @@ router.get('/couponsAndCoins/:id', async (req, res) => {
     }
   });
 
- 
+  router.post('/addCouponsAndCoins/:id', async (req, res) => {
+    
+    try {
+      const { id } = req.params;
+      // console.log('Received request for ID:', id);
+      // Try to find the user in the User collection
+      let user = await User.findById(id);
+  
+      if (!user) {
+        // If not found in User collection, try to find in GoogleUser collection
+        user = await GoogleUser.findById(id);
+  
+        if (!user) {
+          // console.log(`User with ID ${id} not found in either collection.`);
+          return res.status(404).json({ error: 'User not found' });
+        }
+      }
+  
+      // Add a new entry to the coins array
+      const newCoinsEntry = {
+        coins: req.query.coins, // Set the desired number of coins
+        orderId: 'Gift coins',
+        valid: true,
+        lastAddedAt: new Date(new Date() - 10 * 24 * 60 * 60 * 1000), // Set lastAddedAt as 10 days ago
+      };
+  
+      user.coins.push(newCoinsEntry);
+  
+      // Save the updated user
+      await user.save();
+  
+      res.json({ success: true, message: 'Coins added successfully', user });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
   
 module.exports = router;
