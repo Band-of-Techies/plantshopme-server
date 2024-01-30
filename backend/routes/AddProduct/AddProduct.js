@@ -60,27 +60,91 @@ router.post('/addProduct',  upload.fields([
 
 //Other Product adding
 
-router.post('/addOtherProduct',  upload.fields([
-  { name: 'photos', maxCount: 10 },
+// router.post('/addOtherProduct',  upload.fields([
+//   { name: 'photos', maxCount: 10 },
   
+// ]), async (req, res) => {
+//   try {
+
+
+//     const images = req.files['photos'].map((file) => file.filename); // Get an array of uploaded image filenames
+    
+//     // Create a new Product document
+//     const newProduct = new Product({
+//       title: req.query.title, // Get the product title from the query parameter
+//       maincategory: req.query.maincategory,
+//       Mdiscription:req.query.Mdiscription,
+//       Mname:req.query.Mname,
+//       category: req.query.category,
+//       subcategory: req.query.subcategory,
+//       stock: req.query.stock,
+//       description: req.query.description,
+//       photos: req.files['photos'].map(f => ({ url: f.path, filename: f.filename })),
+//       FeatureTag: req.query.FeatureTag, // Get the FeatureTag array from the query parameter
+//       length: req.query.length,
+//       Pots: req.query.Pots,
+//       careType: req.query.careType,
+//       careName: req.query.careName,
+//       caredes: req.query.caredes,
+//       price: req.query.price,
+//       currency: req.query.currency,
+//       scienticName:req.query.scienticName,
+//       impdescription:req.query.impdescription,
+//       ptype:'Other Product',
+//     });
+   
+//     const savedProduct = await newProduct.save();
+
+//     res.status(200).json(savedProduct);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+
+router.post('/addOtherProduct', upload.fields([
+  { name: 'photos', maxCount: 10 },
 ]), async (req, res) => {
   try {
+    // Extract relevant details from the request query
+    const { title, subcategory, category, maincategory } = req.query;
 
+    // Validate required fields
+    if (!title || !req.files['photos']) {
+      return res.status(400).json({ error: "Title and photos are required fields." });
+    }
 
-    const images = req.files['photos'].map((file) => file.filename); // Get an array of uploaded image filenames
-    
+    // Check if at least one dimension exists for the given product details
+    const existingDimensions = await SelectedDimensions.findOne({
+      productName: title,
+    });
+
+    if (!existingDimensions) {
+      return res.status(400).json({ error: "At least one dimension must be inserted before adding products." });
+    }
+
+    // Check if a product with the same title already exists
+    const existingProduct = await Product.findOne({ title: title });
+
+    if (existingProduct) {
+      return res.status(400).json({ error: "A product with the same title already exists." });
+    }
+
+    // Continue with other product creation logic
+    const images = req.files['photos'].map((file) => file.filename);
+
     // Create a new Product document
     const newProduct = new Product({
-      title: req.query.title, // Get the product title from the query parameter
-      maincategory: req.query.maincategory,
-      Mdiscription:req.query.Mdiscription,
-      Mname:req.query.Mname,
-      category: req.query.category,
-      subcategory: req.query.subcategory,
+      title: title,
+      maincategory: maincategory,
+      Mdiscription: req.query.Mdiscription,
+      Mname: req.query.Mname,
+      category: category,
+      subcategory: subcategory,
       stock: req.query.stock,
       description: req.query.description,
       photos: req.files['photos'].map(f => ({ url: f.path, filename: f.filename })),
-      FeatureTag: req.query.FeatureTag, // Get the FeatureTag array from the query parameter
+      FeatureTag: req.query.FeatureTag,
       length: req.query.length,
       Pots: req.query.Pots,
       careType: req.query.careType,
@@ -88,11 +152,11 @@ router.post('/addOtherProduct',  upload.fields([
       caredes: req.query.caredes,
       price: req.query.price,
       currency: req.query.currency,
-      scienticName:req.query.scienticName,
-      impdescription:req.query.impdescription,
-      ptype:'Other Product',
+      scienticName: req.query.scienticName,
+      impdescription: req.query.impdescription,
+      ptype: 'Other Product',
     });
-   
+
     const savedProduct = await newProduct.save();
 
     res.status(200).json(savedProduct);
@@ -100,6 +164,8 @@ router.post('/addOtherProduct',  upload.fields([
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 
 //fetch all products based on the all the parameters which is called by the frontend

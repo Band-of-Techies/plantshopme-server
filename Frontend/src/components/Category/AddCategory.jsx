@@ -149,13 +149,22 @@ function AddCategory() {
         await fetchCategories();
       } else {
         // Handle any errors here
-        toast.error('Failed to add Main Category');
+        toast.error('Failed to add Main Category PLZ check Icon Added or not');
         setErrorMessage('Failed to add category.');
         setSuccessMessage('');
       }
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error occurred while adding category.', error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // Display the error message on the frontend using toast
+        toast.error('Error: ' + error.response.data.error);
+    } else if (error.request) {
+        // The request was made but no response was received
+        toast.error('No response received from the server.');
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        toast.error('Error during request setup: ' + error.message);
+    }
       setSuccessMessage('');
     }
   };
@@ -209,8 +218,17 @@ function AddCategory() {
         setSuccessMessage('');
       }
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error occurred while adding category.', error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // Display the error message on the frontend using toast
+        toast.error('Error: ' + error.response.data.error);
+    } else if (error.request) {
+        // The request was made but no response was received
+        toast.error('No response received from the server.');
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        toast.error('Error during request setup: ' + error.message);
+    }
       setSuccessMessage('');
     }
   };
@@ -264,8 +282,17 @@ function AddCategory() {
         setSuccessMessage('');
       }
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Error occurred while adding subcategory.', error);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // Display the error message on the frontend using toast
+        toast.error('Error: ' + error.response.data.error);
+    } else if (error.request) {
+        // The request was made but no response was received
+        toast.error('No response received from the server.');
+    } else {
+        // Something happened in setting up the request that triggered an Error
+        toast.error('Error during request setup: ' + error.message);
+    }
       setSuccessMessage('');
     }
   };

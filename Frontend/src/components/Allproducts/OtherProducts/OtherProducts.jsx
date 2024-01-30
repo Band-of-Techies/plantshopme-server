@@ -4,6 +4,7 @@ import Navbar from '../../navbar/Navbar';
 import Sidebar from '../../sidebar/Sidebar';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import axios from 'axios';
+import DOMPurify from 'dompurify';
 import Select from 'react-select';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -557,7 +558,18 @@ const OtherProducts = () => {
             setselectedcolors('');
             setSelectedPots1('');
         } catch (error) {
-            toast.error('Error submitting details:', error);
+            // Handle error response
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // Display the error message on the frontend using toast
+                toast.error('Error: ' + error.response.data.error);
+            } else if (error.request) {
+                // The request was made but no response was received
+                toast.error('No response received from the server.');
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                toast.error('Error during request setup: ' + error.message);
+            }
         }
     };
 
@@ -727,13 +739,14 @@ const OtherProducts = () => {
             const selectedFeatureNames = selectedFeatures.map((feature) => feature.value);
             const selectedPotsNames = selectedPots.map((pots) => pots.value);
             const selectedLengthNames = selecteLengthDetails.map((len) => len.value)
-
+            const sanitizedContent = DOMPurify.sanitize(SKU);
+            console.log('Sanitized Content:', sanitizedContent);
             // Send a POST request to server endpoint to upload files
             await axios.post(`${process.env.REACT_APP_BASE_URL}/addOtherProduct`, formData, {
                 params: {
                     title: productTitle,
                     scienticName: scientific,
-                    impdescription: SKU,
+                    impdescription: SKU ,
                     Mname: Mname,
                     Mdiscription: Mdiscription,
                     description: description,
@@ -782,8 +795,18 @@ const OtherProducts = () => {
 
 
         } catch (error) {
-            // Handle any errors and show an error message
-            toast.error('Error uploading files: ' + error.message);
+            // Handle error response
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // Display the error message on the frontend using toast
+                toast.error('Error: ' + error.response.data.error);
+            } else if (error.request) {
+                // The request was made but no response was received
+                toast.error('No response received from the server.');
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                toast.error('Error during request setup: ' + error.message);
+            }
         }
     };
 
@@ -1171,7 +1194,10 @@ const OtherProducts = () => {
         setselectedLength(selectedOptions);
     };
 
-
+    const handleimportantInputChange = (e) => {
+        const sanitizedContent = DOMPurify.sanitize(e.target.innerHTML);
+  setSKU(sanitizedContent);
+    };
     {/*****PRODUCT CATEGORY*******/ }
 
     return (
@@ -1227,6 +1253,21 @@ const OtherProducts = () => {
                                     // borderColor: 'green',
                                     backgroundColor: 'lightcoral', // Set the background color to light red
                                 }} />
+                            {/* <div>
+                                <div
+                                    contentEditable
+                                    className='tex-area'
+                                    placeholder='Important Description'
+                                    onChange={(e) => setSKU(e.target.value)}
+                                    dangerouslySetInnerHTML={{ __html: SKU }}
+                                    style={{
+                                        border: '1px solid lightcoral',
+                                        padding: '5px',
+                                        minHeight: '100px',
+                                        minWidth:'800px',
+                                    }}
+                                />
+                            </div> */}
 
                             <textarea
                                 className='tex-area'
@@ -1829,11 +1870,11 @@ const OtherProducts = () => {
 
 
                         <div className='plant-care-div'>
-                        <span>Product Care</span>
+                            <span>Product Care</span>
                             <div className='form'>
-                           
+
                                 <div className='plantcares-div'>
-                                
+
                                     <TextField
                                         id="outlined-select-currency"
                                         select
@@ -1940,9 +1981,9 @@ const OtherProducts = () => {
                     <br></br>
                     {message && <p className="message">{message}</p>}
                 </Wrapper>
-            </div>
+            </div >
             {/* Add Feature Dialog */}
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
+            < Dialog open={openDialog} onClose={handleCloseDialog} >
                 <DialogTitle>Add New Feature</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -1958,11 +1999,11 @@ const OtherProducts = () => {
                         Submit
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog >
 
 
             {/* Add ADD LENGTH Dialog */}
-            <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+            < Dialog open={openDialog2} onClose={handleCloseDialog2} >
                 <DialogTitle>Add New Length</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -1979,9 +2020,9 @@ const OtherProducts = () => {
                         Submit
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog >
 
-        </div></>
+        </div ></>
     );
 };
 

@@ -19,6 +19,39 @@ const { storage } = require('../cloudinary/index')
 const upload = multer({ storage: storage });
 
 // Route to add a new MainCategory with image upload
+// router.post('/addMainCategory', upload.single('image'), async (req, res) => {
+//   console.log('triggered');
+//   try {
+//     const { name } = req.body;
+
+//     // Check if a MainCategory with the same name already exists
+//     const existingMainCategory = await MainCategory.findOne({ name });
+
+//     if (existingMainCategory) {
+//       // If a MainCategory with the same name exists, send an error response
+//       return res.status(400).json({ error: 'MainCategory with this name already exists' });
+//     }
+
+//     // Get the file path of the uploaded image
+//     const image = req.file ? req.file.path : null;
+
+//     // Create a new MainCategory with the name and imagePath
+//     const mainCategory = new MainCategory({
+//       name: name,
+//       photo: {
+//         url: image,
+//         filename: name
+//       }
+//     });
+
+//     // Save the MainCategory to the database
+//     await mainCategory.save();
+
+//     res.status(201).json(mainCategory);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
 router.post('/addMainCategory', upload.single('image'), async (req, res) => {
   console.log('triggered');
   try {
@@ -32,8 +65,14 @@ router.post('/addMainCategory', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'MainCategory with this name already exists' });
     }
 
+    // Check if the photo is present in the request
+    if (!req.file) {
+      
+      return res.status(400).json({ error: "Photo is required" });
+    }
+
     // Get the file path of the uploaded image
-    const image = req.file ? req.file.path : null;
+    const image = req.file.path;
 
     // Create a new MainCategory with the name and imagePath
     const mainCategory = new MainCategory({

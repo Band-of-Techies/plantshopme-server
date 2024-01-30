@@ -51,9 +51,9 @@ router.delete('/deletedimensions1/:id', async (req, res) => {
   }
 });
 
+
 router.delete('/deletedimensions/:id', async (req, res) => {
   const { id } = req.params;
-
   try {
     const deletedDimension = await Fields.findByIdAndDelete(id);
     if (!deletedDimension) {
