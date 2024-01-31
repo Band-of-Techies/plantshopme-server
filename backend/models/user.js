@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     username: { type: String, required: true }, // Change "email" to "username"
     password: { type: String, required: true },
+    userType: { type: String, required: true },
 });
 
 // Method to generate a JSON Web Token (JWT) for user authentication
@@ -29,6 +30,7 @@ const validate = (data) => {
         lastName: Joi.string().required().label("Last Name"),
         username: Joi.string().required().label("Username"), // Change "email" to "username"
         password: passwordComplexity().required().label("Password"),
+        userType:Joi.string().required().label("UserType"),
     });
     return schema.validate(data);
 };

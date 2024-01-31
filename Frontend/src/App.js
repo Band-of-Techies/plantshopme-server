@@ -38,15 +38,19 @@ import RefundForm from "./components/RefundForm/RefundForm";
 import AddNewproduct from "./components/NewAddProduct/AddNewproduct";
 import Mapfunction from "./components/Map/Mapfunction";
 import Refundlist from "./components/RefundForm/Refundlist";
-
+import Rolemanagement from "./components/RoleManagement/Rolemanagement";
 import Featurelevel from "./components/FeatureLevel/Featurelevel";
 import CouponManagement from "./components/Coupons/CouponManagement";
 import UpdateProductCategories from "./components/UpdateProductCategories/UpdateProductCategories";
 import User from "./components/Coupons/User";
+import Sidebar from "./components/sidebar/Sidebar";
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
   const user = localStorage.getItem("token");
+  const UserType = localStorage.getItem("UserType");
+
+ 
   return (
     <div className={darkMode ? "app dark" : "app"}>
       <BrowserRouter>
@@ -58,6 +62,9 @@ function App() {
 
           {user && <Route path="/CouponManagement" exact element={<CouponManagement />} />}
           <Route path="/CouponManagement" element={<Navigate replace to="/login" />} />
+
+          {user && <Route path="/Rolemanagement" exact element={<Rolemanagement />} />}
+          <Route path="/Rolemanagement" element={<Navigate replace to="/login" />} />
 
           {user && <Route path="/CouponManagement/:id" exact element={<User/>} />}
           <Route path="/CouponManagement/:id" element={<Navigate replace to="/login" />} />

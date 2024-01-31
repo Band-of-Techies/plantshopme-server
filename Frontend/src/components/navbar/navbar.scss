@@ -78,6 +78,22 @@
     transition: all 0.2s;
   }
 }
+.green{
+  background:#aef37d;
+  padding:0.25rem .75rem;
+  border-radius:5px;
+  font-weight: bold;
+  font-size:14px;
+  .icon,a{
+    color:#49a308;
+  }
+}
+.green:hover{
+  .icon,a{
+    color:#2d6901;
+    transition: all 0.2s;
+  }
+}
     .items {
       display: flex;
       align-items: center;

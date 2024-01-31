@@ -28,8 +28,8 @@ function Login() {
     try {
       const url = `${process.env.REACT_APP_BASE_URL}/auth`;
       const response = await axios.post(url, data);
-      localStorage.setItem('token', response.data);
-
+      localStorage.setItem('token', response.data.user);
+      localStorage.setItem('UserType', response.data.data);
       // Redirect the user to the home page after successful login
       // You may replace the URL or navigation logic as needed
       // For example, you can use React Router to navigate to a different page.

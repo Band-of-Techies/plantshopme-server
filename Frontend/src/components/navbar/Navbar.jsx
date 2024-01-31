@@ -7,7 +7,7 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { useContext, useEffect, useState } from "react";
+import  React, { useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { getTitle } from "./checkurl";
 
@@ -36,6 +36,37 @@ const Navbar = () => {
     const newTitle = getTitle(path); 
     setTitle(newTitle); 
   }, [location.pathname]);
+
+
+
+  const { dispatch } = useContext(DarkModeContext);
+  const [userType, setUserType] = useState('');
+  const [roles, setRoles] = useState([]);
+
+  const fetchUserDetails = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BASE_URL}/CreateRoles/${LocalUserType}`);
+      const data = await response.json();
+
+      console.log('Fetched user details:', data);
+
+      setUserType(data.userType);
+      setRoles(data.roles || []);
+    } catch (error) {
+      console.error('Error fetching user details:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch user details when the component mounts
+    fetchUserDetails();
+  }, []);
+
+
+  const LocalUserType = localStorage.getItem("UserType");
+  console.log("LocalUserType:", LocalUserType);
+
+
   return (
     <div className="navbar">
       <div className="wrapper">
@@ -54,10 +85,38 @@ const Navbar = () => {
           </Link>
           </div>
           <div className="item blue"  >
-          <Link to="/signup">
+          {/* <Link to="/signup">
               <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
               <span>Signup</span>
+          </Link> */}
+
+          {roles.includes("Create User") && (
+            <React.Fragment key="Plantcare">
+             
+             <Link to="/signup">
+              <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
+              <span>Staff</span>
           </Link>
+            </React.Fragment>
+          )}
+
+          </div>
+
+          <div className="item green"  >
+          {/* <Link to="/Rolemanagement">
+              <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
+              <span>Role</span>
+          </Link> */}
+
+          {roles.includes("Role Management") && (
+            <React.Fragment key="Plantcare">
+             
+             <Link to="/Rolemanagement">
+              <SignUpIconFilled className="icon" style={{ fontSize: "14px" }} />
+              <span>Role</span>
+          </Link>
+            </React.Fragment>
+          )}
           </div>
           {/* <div className="item">
             <DarkModeOutlinedIcon

@@ -4,38 +4,40 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 
 const Signup = () => {
-    // State to manage form data and errors
     const [data, setData] = useState({
         firstName: "",
         lastName: "",
         username: "",
         password: "",
+        userType: "",
     });
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    // Function to handle input changes and update the form data
     const handleChange = ({ currentTarget: input }) => {
         setData({ ...data, [input.name]: input.value });
     };
 
-    // Function to handle form submission
+    const [userType, setUserType] = useState('');
+
+    const handleUserTypeChange = (e) => {
+        setUserType(e.target.value);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // URL for the POST request to create a new user
             const url = `${process.env.REACT_APP_BASE_URL}/users`;
-            
-            // Sending a POST request to create a new user
-            const { data: res } = await axios.post(url, data); 
-            
-            // Navigating to the login page after successful signup
-            navigate("/login");
-            
-            // Logging a success message to the console
+
+            // Include userType in the data object
+            const postData = { ...data, userType };
+
+            const { data: res } = await axios.post(url, postData);
+
+            navigate("/signup");
+
             console.log(res.message);
         } catch (error) {
-            // Handling errors, including validation and server errors
             if (
                 error.response &&
                 error.response.status >= 400 &&
@@ -52,10 +54,10 @@ const Signup = () => {
             <div className={styles.signup_form_container}>
                 <div className={styles.left}>
                     <h1>Welcome Back</h1>
-                    <Link to="/login">
+                    <Link to="/">
                         {/* Link to the login page */}
                         <button type="button" className={styles.white_btn}>
-                            Sign in
+                            Dashboard
                         </button>
                     </Link>
                 </div>
@@ -81,6 +83,15 @@ const Signup = () => {
                             required
                             className={styles.input}
                         />
+                         <select onChange={handleUserTypeChange} value={userType} className={styles.select} name="userType">
+                        <option value="">Select User Type</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Order Manager">Order Manager</option>
+                        <option value="Product Manager">Product Manager</option>
+                        <option value="SEO Specialist">SEO Specialist</option>
+                        <option value="Marketing Manager">Marketing Manager</option>
+                        <option value="Accountant">Accountant</option>
+                    </select>
                         <input
                             type="text"
                             placeholder="Username"

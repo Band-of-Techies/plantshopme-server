@@ -67,6 +67,17 @@
 	font-size: 14px;
 }
 
+.select {
+	outline: none;
+	border: none;
+	width: 385px;
+	padding: 15px;
+	border-radius: 10px;
+	background-color: #edf5f3;
+	margin: 5px 0;
+	font-size: 14px;
+}
+
 .error_msg {
 	width: 370px;
 	padding: 15px;

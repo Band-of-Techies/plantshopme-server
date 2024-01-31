@@ -5,7 +5,6 @@ const { User: CustomerNorm } = require('../../models/Token/customer'); // Adjust
 const { User: Cutomer } = require('../../passport'); // Adjust the path accordingly
 const moment = require('moment');
 
-
 router.get('/total-users', async (req, res) => {
   try {
     if (!CustomerNorm || !Cutomer) {
@@ -15,49 +14,36 @@ router.get('/total-users', async (req, res) => {
     const { status } = req.query;
 
     let customerNormCount;
-    let cutomerCount;
+    let customerCount;
 
-    switch (status) {
-      case 'today':
-        customerNormCount = await CustomerNorm.countDocuments({
-          createdAt: {
-            $gte: moment().startOf('day').toDate(),
-            $lt: moment().endOf('day').toDate(),
-          },
-        });
-        cutomerCount = await Cutomer.countDocuments({
-          createdAt: {
-            $gte: moment().startOf('day').toDate(),
-            $lt: moment().endOf('day').toDate(),
-          },
-        });
-        break;
+    let filter = {};
 
-      case 'thisMonth':
-        customerNormCount = await CustomerNorm.countDocuments({
-          createdAt: {
-            $gte: moment().startOf('month').toDate(),
-            $lt: moment().endOf('month').toDate(),
-          },
-        });
-        cutomerCount = await Cutomer.countDocuments({
-          createdAt: {
-            $gte: moment().startOf('month').toDate(),
-            $lt: moment().endOf('month').toDate(),
-          },
-        });
-        break;
+    // Handle date filtering
+    if (status === 'today') {
+      filter.createdAt = {
+        $gte: new Date(new Date().setHours(00, 00, 00)),
+        $lte: new Date(new Date().setHours(23, 59, 59)),
+      };
+    } else if (status === 'thisMonth') {
+      const currentDate = new Date();
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
 
-      case 'total':
-        customerNormCount = await CustomerNorm.countDocuments();
-        cutomerCount = await Cutomer.countDocuments();
-        break;
-
-      default:
-        return res.status(400).json({ error: 'Invalid status parameter' });
+      filter.createdAt = {
+        $gte: firstDayOfMonth,
+        $lte: lastDayOfMonth,
+      };
+    } else if (status !== 'total') {
+      return res.status(400).json({ error: 'Invalid status parameter' });
     }
 
-    const totalUsers = customerNormCount + cutomerCount;
+    // Count CustomerNorm
+    customerNormCount = await CustomerNorm.countDocuments(filter);
+
+    // Count Customer
+    customerCount = await Cutomer.countDocuments(filter);
+
+    const totalUsers = customerNormCount + customerCount;
 
     res.json({ totalUsers });
   } catch (error) {
@@ -65,6 +51,68 @@ router.get('/total-users', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+// router.get('/total-users', async (req, res) => {
+//   try {
+//     if (!CustomerNorm || !Cutomer) {
+//       return res.status(500).json({ error: 'Models not defined properly' });
+//     }
+
+//     const { status } = req.query;
+
+//     let customerNormCount;
+//     let cutomerCount;
+
+//     switch (status) {
+//       case 'today':
+//         customerNormCount = await CustomerNorm.countDocuments({
+//           createdAt: {
+//             $gte: moment().startOf('day').toDate(),
+//             $lt: moment().endOf('day').toDate(),
+//           },
+//         });
+//         cutomerCount = await Cutomer.countDocuments({
+//           createdAt: {
+//             $gte: moment().startOf('day').toDate(),
+//             $lt: moment().endOf('day').toDate(),
+//           },
+//         });
+//         break;
+
+//       case 'thisMonth':
+//         customerNormCount = await CustomerNorm.countDocuments({
+//           createdAt: {
+//             $gte: moment().startOf('month').toDate(),
+//             $lt: moment().endOf('month').toDate(),
+//           },
+//         });
+//         cutomerCount = await Cutomer.countDocuments({
+//           createdAt: {
+//             $gte: moment().startOf('month').toDate(),
+//             $lt: moment().endOf('month').toDate(),
+//           },
+//         });
+//         break;
+
+//       case 'total':
+//         customerNormCount = await CustomerNorm.countDocuments();
+//         cutomerCount = await Cutomer.countDocuments();
+//         break;
+
+//       default:
+//         return res.status(400).json({ error: 'Invalid status parameter' });
+//     }
+
+//     const totalUsers = customerNormCount + cutomerCount;
+
+//     res.json({ totalUsers });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 
 

@@ -25,7 +25,7 @@
 
 //         // Generate a JWT token for the authenticated user
 //         const token = user.generateAuthToken();
-//         res.status(200).send({ data: token, message: "Logged in successfully" });
+//         res.status(200).send({ data: user.userType, message: "Logged in successfully" });
 //     } catch (error) {
 //         // Handle internal server errors
 //         res.status(500).send({ message: "Internal Server Error" });
@@ -71,7 +71,7 @@ router.post("/", async (req, res) => {
             return res.status(401).send({ message: "Invalid Username or Password" });
 
         // No token issuance, just a simple success response
-        res.status(200).send({ message: "Logged in successfully" });
+      res.status(200).send({ data: user.userType, message: "Logged in successfully" });
     } catch (error) {
         // Handle internal server errors
         res.status(500).send({ message: "Internal Server Error" });
