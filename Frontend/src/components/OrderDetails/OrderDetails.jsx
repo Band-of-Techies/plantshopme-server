@@ -35,7 +35,14 @@ const PaymentIntentsTable = () => {
   const [selectedEndDate, setSelectedEndDate] = useState('');
   const [selectedOrderStatus, setSelectedOrderStatus] = useState('');
   const [selectedOrderStatus2, setSelectedOrderStatus2] = useState('');
+  const[selectedpaymentData,setpaymentDataRegex]=useState('');
   const [loading, setLoading] = useState(true);
+
+
+  const handleUserTypeChange = (e) => {
+    setpaymentDataRegex(e.target.value);
+    
+};
 
   const handleStartDateChange = (event) => {
     setSelectedStartDate(event.target.value);
@@ -94,6 +101,7 @@ const PaymentIntentsTable = () => {
     if (selectedStartDate) params.startDate = selectedStartDate;
     if (selectedEndDate) params.endDate = selectedEndDate;
     if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
+    if(selectedpaymentData) params.paymentData=selectedpaymentData;
 
     axios
       .get(apiUrl, { params })
@@ -115,7 +123,7 @@ const PaymentIntentsTable = () => {
 
   useEffect(() => {
     fetchPaymentIntents();
-  }, [selectedStartDate, selectedEndDate, selectedOrderStatus]);
+  }, [selectedStartDate, selectedEndDate, selectedOrderStatus,selectedpaymentData]);
 
   return (
     <div className='single'>
@@ -151,7 +159,19 @@ const PaymentIntentsTable = () => {
                     shrink: true,
                   }}
                 />
-              </div>
+                <div style={{paddingTop:'20px'}}>
+                <FormControl style={{ flex: 1, marginLeft: '20px' }}>
+                <Select onChange={handleUserTypeChange} value={selectedpaymentData} displayEmpty
+                  inputProps={{ 'aria-label': 'Without label' }}>
+                        <MenuItem value="" >Select Payment Method</MenuItem>
+                        <MenuItem value="Cash on delivery"  >Cash On Delivery</MenuItem>
+                        
+                        
+                        
+                    </Select>
+                    </FormControl>
+                </div>
+              </div> 
               <FormControl style={{ flex: 1, marginLeft: '20px' }}>
                 <Select
                   value={selectedOrderStatus}
@@ -169,6 +189,7 @@ const PaymentIntentsTable = () => {
                   <MenuItem value="Refund">Refund</MenuItem>
                 </Select>
               </FormControl>
+             
             </div>
 
             <div style={{ paddingTop: '10px' }}>

@@ -571,7 +571,7 @@ router.post('/create-cod-intent', async (req, res) => {
 router.get('/get-payment-intents', async (req, res) => {
   try {
     let paymentIntents;
-    const { startDate, endDate, Orderstatus } = req.query;
+    const { startDate, endDate, Orderstatus,paymentData } = req.query;
 
     let filter = {};
 
@@ -589,6 +589,11 @@ router.get('/get-payment-intents', async (req, res) => {
       filter.Orderstatus = { $regex: orderStatusRegex };
     }
     
+
+    if(paymentData){
+      const paymentDataRegex = new RegExp(paymentData, 'i');
+      filter.paymentData = { $regex: paymentDataRegex };
+    }
 
     paymentIntents = await paymentIntentSchema.find(filter);
 
