@@ -105,7 +105,7 @@ const Rolemanagement = () => {
                         <option value="Product Manager">Product Manager</option>
                         <option value="SEO Specialist">SEO Specialist</option>
                         <option value="Marketing Manager">Marketing Manager</option>
-                        <option value="Accountant">Accountant</option>
+                        
                     </select>
 
                     <div className="checkbox-group" style={{paddingTop:"50px",paddingBottom:'40px'}}>

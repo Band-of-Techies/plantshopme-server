@@ -390,8 +390,8 @@ const Sidebar = () => {
           </Link> */}
 
 
-          {roles.includes("Coupons") && (
-            <React.Fragment key="Coupons">
+          {roles.includes("Customer Management") && (
+            <React.Fragment key="Customer Management">
            <Link to="/CouponManagement" style={{ textDecoration: "none" }}>
             <li>
               <SettingsIcon className="icon" style={{ fontSize: "14px" }} />

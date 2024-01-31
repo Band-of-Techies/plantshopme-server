@@ -33,6 +33,11 @@ function Login() {
       // Redirect the user to the home page after successful login
       // You may replace the URL or navigation logic as needed
       // For example, you can use React Router to navigate to a different page.
+      
+      if(response.data.statu<=200)
+      {
+        setError("Registered Successfully");
+      }
       window.location = '/';
     } catch (err) {
       if (err.response && err.response.status >= 400 && err.response.status <= 500) {

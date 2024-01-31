@@ -90,7 +90,7 @@ const Signup = () => {
                         <option value="Product Manager">Product Manager</option>
                         <option value="SEO Specialist">SEO Specialist</option>
                         <option value="Marketing Manager">Marketing Manager</option>
-                        <option value="Accountant">Accountant</option>
+                        
                     </select>
                         <input
                             type="text"
