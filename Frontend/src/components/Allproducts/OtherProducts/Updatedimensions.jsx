@@ -265,15 +265,24 @@ const Updatedimensions = () => {
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/delete-by-id/${id}`, {
         method: 'DELETE',
       });
-      const result = await response.json();
-      toast.success('Deleted successfully');
-
-      // After successful deletion, refresh the product details
-      fetchProductDetails();
+  
+      if (response.ok) {
+        const result = await response.json();
+        toast.success(result.message);
+  
+        // After successful deletion, refresh the product details
+        fetchProductDetails();
+      } else {
+        // If the response status is not ok, display an error toast with the status text
+        const errorText = await response.text();
+        toast.error(`Error deleting product: ${errorText}`);
+      }
     } catch (error) {
-      toast.error('Error deleting product:', error);
+      // Display an error toast for any other unexpected errors
+      toast.error(`Error deleting product: ${error.message}`);
     }
   };
+  
   
 
   return (

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardMedia, Button, Grid, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProductImageUpdation = () => {
     const [existingPhotos, setExistingPhotos] = useState([]);
@@ -39,7 +41,7 @@ const ProductImageUpdation = () => {
         // Update newPhotos with selected files
         setNewPhotos((prevPhotos) => [...prevPhotos, ...selectedFiles]);
 
-        
+
         setFileInputKey((prevKey) => prevKey + 1);
     };
 
@@ -71,18 +73,27 @@ const ProductImageUpdation = () => {
             if (productIdFromLocalStorage != '') {
                 pid = productIdFromLocalStorage
             }
+
             fetch(`${process.env.REACT_APP_BASE_URL}/deleteProductPhoto/${pid}/${photoId}`, {
                 method: 'DELETE',
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        // If the response status is not ok, reject the promise with the error status text
+                        return Promise.reject(`Error deleting photo Plz Keep Atleast one image`);
+                    }
+                })
                 .then((data) => {
-                    console.log('Photo deleted successfully:', data);
+                    toast.success(data.message);
                     // Optionally, you can update the existingPhotos state after successful deletion
-                    // setExistingPhotos(data.updatedPhotos);
+                    // setExistingPhotos(data.updatedProduct.photos);
                     fetchExistingPhotos();
                 })
-                .catch((error) => console.error('Error deleting photo:', error));
+                .catch((error) => toast.error(error,+'Atleast one image must keep'));
         });
+
     };
 
     const handlePhotoSubmission = () => {
@@ -119,6 +130,8 @@ const ProductImageUpdation = () => {
 
     return (
         <div style={{ padding: '20px' }}>
+            <ToastContainer />
+            
             {/* Display existing and preview photos */}
             <Grid container spacing={1}>
                 {existingPhotos.length === 0 ? (

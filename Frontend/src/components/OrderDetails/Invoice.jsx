@@ -67,7 +67,7 @@ const PrintPage = ({ intent }) => {
     const Final = intent.total || 0
  
 
-    
+    const shippingfee=intent.shipping_fee || 0
 
     const coin=intent?.coinsData?.value || '';
    
@@ -104,8 +104,8 @@ const PrintPage = ({ intent }) => {
     
         const productPrice = product.flashSalePrice || product.dimension.Price || 0;
     
-        const Value1 = product.dimension?.Value1 || 0;
-        const Value2 = product.dimension?.Value2 || 0;
+        const Value1 = product.dimension?.Value1 || '';
+        const Value2 = product.dimension?.Value2 || '';
     
         const dimensions = `${Value1},${Value2}`;
     
@@ -163,7 +163,7 @@ const PrintPage = ({ intent }) => {
 
     // Add a column for Subtotal, VAT, Total
     pdf.text('Subtotal', pdf.internal.pageSize.width / 2, 213, { align: 'right' });
-    pdf.text('VAT', pdf.internal.pageSize.width / 2, 218, { align: 'right' });
+    pdf.text('Shipping Fee', pdf.internal.pageSize.width / 2, 218, { align: 'right' });
     pdf.text('Total', pdf.internal.pageSize.width / 2, 223, { align: 'right' });
     pdf.text('After Discount', pdf.internal.pageSize.width / 2, 233, { align: 'right' });
     pdf.text('Discount', pdf.internal.pageSize.width / 2, 227, { align: 'right' });
@@ -173,10 +173,10 @@ const PrintPage = ({ intent }) => {
     const subtotal = 100; 
     const vatp=5;// Replace with actual subtotal value
     const vat = (Gamount*5)/100; // Replace with actual VAT value
-    const grandTotal = Gamount ; // Replace with actual total value
+    const grandTotal = Gamount+shippingfee; // Replace with actual total value
     const finalt = Final + vat
     pdf.text(`AED ${Gamount}`, pdf.internal.pageSize.width - 20, 213, { align: 'right' });
-    pdf.text(`${vatp}%`, pdf.internal.pageSize.width - 20, 218, { align: 'right' });
+    pdf.text(`${shippingfee}`, pdf.internal.pageSize.width - 20, 218, { align: 'right' });
     pdf.text(`AED ${grandTotal}`, pdf.internal.pageSize.width - 20, 223, { align: 'right' });
     const discountText = discountperc !== 0
   ? `${discountperc} %`
@@ -188,7 +188,7 @@ pdf.text(discountText, pdf.internal.pageSize.width - 20, 227, { align: 'right' }
     pdf.text(`AED ${Final}`, pdf.internal.pageSize.width - 20, 233, { align: 'right' });
     // Display the total amount in words
     pdf.setFont('times', 'bolditalic');
-    pdf.setFontSize(12);
+    pdf.setFontSize(10);
     pdf.setTextColor(0, 0, 139);
     pdf.text('Amount in Words:', pdf.internal.pageSize.width / 2, 238, { align: 'right' });
     pdf.text('AED ' + numberToWords(Final) + ' only', pdf.internal.pageSize.width - 20, 238, { align: 'right' });
@@ -198,7 +198,7 @@ pdf.text(discountText, pdf.internal.pageSize.width - 20, 227, { align: 'right' }
 
     // Add a bottom footer with Bank details
     pdf.setFont('times', 'bolditalic');
-    pdf.setFontSize(16);
+    pdf.setFontSize(13);
     pdf.setTextColor(144, 238, 144); // Light green color
     pdf.text('Bank Details', 20, 245);
     pdf.setFont('times', 'normal');

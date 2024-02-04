@@ -605,6 +605,38 @@ router.put('/editProductPhotos/:id', upload.array('photos', 10), async (req, res
 // ..
 
 
+// router.delete('/deleteProductPhoto/:productId/:photoId', async (req, res) => {
+//   try {
+//     const { productId, photoId } = req.params;
+
+//     // Find the product by its ID
+//     const product = await Product.findById(productId);
+
+//     if (!product) {
+//       return res.status(404).json({ message: 'Product not found' });
+//     }
+
+//     // Find the index of the photo with the specified photo ID
+//     const photoIndex = product.photos.findIndex((photo) => photo._id.toString() === photoId);
+
+//     if (photoIndex === -1) {
+//       return res.status(404).json({ message: 'Photo not found in the product' });
+//     }
+
+//     // Remove the photo from the array
+//     product.photos.splice(photoIndex, 1);
+
+//     // Save the updated product without the deleted photo
+//     const updatedProduct = await product.save();
+
+//     res.status(200).json({ message: 'Photo deleted successfully', updatedProduct });
+//   } catch (error) {
+
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+
 router.delete('/deleteProductPhoto/:productId/:photoId', async (req, res) => {
   try {
     const { productId, photoId } = req.params;
@@ -623,18 +655,24 @@ router.delete('/deleteProductPhoto/:productId/:photoId', async (req, res) => {
       return res.status(404).json({ message: 'Photo not found in the product' });
     }
 
-    // Remove the photo from the array
-    product.photos.splice(photoIndex, 1);
+    // Ensure there is more than one photo before deletion
+    if (product.photos.length > 1) {
+      // Remove the photo from the array
+      product.photos.splice(photoIndex, 1);
 
-    // Save the updated product without the deleted photo
-    const updatedProduct = await product.save();
+      // Save the updated product without the deleted photo
+      const updatedProduct = await product.save();
 
-    res.status(200).json({ message: 'Photo deleted successfully', updatedProduct });
+      res.status(200).json({ message: 'Photo deleted successfully', updatedProduct });
+    } else {
+      // Deletion not allowed when there is only one photo
+      res.status(400).json({ message: 'Deletion not allowed. At least one photo must remain for the product.' });
+    }
   } catch (error) {
-
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // router.delete('/deleteProduct/:id', async (req, res) => {
 //   try {

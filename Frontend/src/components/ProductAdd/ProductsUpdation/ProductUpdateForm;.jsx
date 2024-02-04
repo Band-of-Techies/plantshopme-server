@@ -12,6 +12,7 @@ import { Wrapper } from './addProductWrapper';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Updatedimensions from '../../Allproducts/OtherProducts/Updatedimensions';
+import UpdateCategories from '../../UpdateProductCategories/UpdateCategories';
 const ProductUpdateForm = () => {
   const [updatedTitle, setUpdatedTitle] = useState('');
   const[updateMname,setupdateMname]=useState('');
@@ -701,6 +702,9 @@ const handleimpdescriptionchange =(e)=>{
 
               <div style={{ paddingTop: '20px' }}>
                
+
+               <UpdateCategories/>
+
                 {/* {lengthList.map((item, index) => (
                   <div key={index} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '15px', borderRadius: '5px' }}>
                     <Grid container spacing={2} alignItems="center">

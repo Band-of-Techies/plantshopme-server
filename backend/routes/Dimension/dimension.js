@@ -195,16 +195,56 @@ router.put('/update-by-id/:_id', async (req, res) => {
 });
 
 
+// router.delete('/delete-by-id/:id', async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const result = await SelectedLengthDetails.deleteOne({ _id: id });
+//     res.json(result);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
 router.delete('/delete-by-id/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const result = await SelectedLengthDetails.deleteOne({ _id: id });
-    res.json(result);
+
+    // Find the productName based on the provided id
+    const product = await SelectedLengthDetails.findById(id);
+    
+    if (!product) {
+      // No product found with the given id
+      return res.json({ message: 'No product found with the provided id.' });
+    }
+
+    const productName = product.productName;
+
+    // Check the current count of documents with the same productName in the collection
+    const currentCount = await SelectedLengthDetails.countDocuments({ productName });
+
+    // Ensure there is more than one document with the same productName before deletion
+    if (currentCount > 1) {
+      // Perform the deletion
+      const deletionResult = await SelectedLengthDetails.deleteOne({ _id: id });
+
+      if (deletionResult.deletedCount === 1) {
+        // Deletion was successful
+        res.json({ message: 'Deletion successful' });
+      } else {
+        // No document was deleted
+        res.json({ message: 'No document found for deletion.' });
+      }
+    } else {
+      // Deletion not allowed when count is less than or equal to 1 for the same productName
+      res.json({ message: 'Deletion not allowed. At least one Dimension with the same product must remain.' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 

@@ -197,6 +197,8 @@ let Clientlocation=''
                                         <p>Payment Mode: {(isNaN((data?.paymentData?.amount / 100).toFixed(2)) ? (' Cash on Delivery') : ' Online payment')}</p>
                                         <p>Order Status:{data.Orderstatus}</p>
                                         <p>GrandTotal: {finalAmount}</p>
+                                        <p>Shipping Fee: {data.shipping_fee}</p>
+                                        <p>Delivery Location: {data.deliveryLocation}</p>
                                         <p>After Discount:{data.total}</p>
                                         {/* <p>After Discount:{(isNaN(data?.couponData?.value / 10) ? finalAmount : data.total)}</p> */}
                                         <StyledPrintPageContainer>
