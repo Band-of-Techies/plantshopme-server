@@ -79,6 +79,10 @@ const UpdateCategories = () => {
   useEffect(() => {
     fetchSubCategories(selectedCategories);
   }, [selectedCategories]);
+  
+  useEffect(() => {
+    fetchThirdCategories(selectedSubCategories);
+  }, [selectedSubCategories]);
 
   const handleMainCategoryChange = (event) => {
     const { name } = event.target;

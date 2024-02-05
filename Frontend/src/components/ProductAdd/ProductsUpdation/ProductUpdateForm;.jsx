@@ -4,7 +4,7 @@ import Dropzone from 'react-dropzone';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, CircularProgress,Select } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, CircularProgress, Select } from '@mui/material';
 import ProductImageUpdation from './ProductImageUpdation';
 import { useParams, useNavigate } from 'react-router-dom';
 import Dimensions from '../../Allproducts/OtherProducts/Dimensions';
@@ -15,11 +15,11 @@ import Updatedimensions from '../../Allproducts/OtherProducts/Updatedimensions';
 import UpdateCategories from '../../UpdateProductCategories/UpdateCategories';
 const ProductUpdateForm = () => {
   const [updatedTitle, setUpdatedTitle] = useState('');
-  const[updateMname,setupdateMname]=useState('');
-  const[updateMdiscription,setupdateMdiscription]=useState('');
-    const [updatedScienticname, setupdatedScienticname] = useState('');
+  const [updateMname, setupdateMname] = useState('');
+  const [updateMdiscription, setupdateMdiscription] = useState('');
+  const [updatedScienticname, setupdatedScienticname] = useState('');
   const [updatedDescription, setUpdatedDescription] = useState('');
-  const [updateimpdescription,setupdateimpdescription]=useState('');
+  const [updateimpdescription, setupdateimpdescription] = useState('');
   const [productId, setSelectedProductId] = useState('');
   const [updatePhotos, setUpdatedPhotos] = useState([]);
   const [pots, setPots] = useState([]);
@@ -33,6 +33,23 @@ const ProductUpdateForm = () => {
     handleRefresh();
     fetchFeatureNames();
   }, []);
+
+  const [plantcareNames, setPlantcareNames] = useState([]);
+  useEffect(() => {
+    // Make a GET request to fetch the PlantCare names
+    fetchCareNames();
+  }, []);
+
+  const fetchCareNames = async () => {
+    axios.get(`${process.env.REACT_APP_BASE_URL}/getPlantcareNames`)
+      .then((response) => {
+        // Set the received names in the state
+        setPlantcareNames(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching PlantCare names:', error);
+      });
+  }
 
   const { _Id, title } = useParams();
 
@@ -100,11 +117,14 @@ const ProductUpdateForm = () => {
       if (response.ok) {
 
         const data = await response.json();
-        // setMessage('Product care data inserted successfully');
+        handleCloseDialog();
+        toast.success('Product care data inserted successfully');
+        handlePlantCare();
+
       } else if (response.status === 400) {
         // If status is 400, it means there are duplicates
         const data = await response.json();
-        // setMessage(data.error);
+        toast.error(data.error);
       } else {
         // Handle other errors
         // setMessage('Error inserting product data');
@@ -177,22 +197,22 @@ const ProductUpdateForm = () => {
   const handleTitleChange = (e) => {
     setUpdatedTitle(e.target.value);
   };
-  const handleMnamechange=(e)=>{
+  const handleMnamechange = (e) => {
     setupdateMname(e.target.value);
   }
-const handleMdiscriptionChange=(e)=>{
-  setupdateMdiscription(e.target.value);
-}
-  const handleScientificcahnge=(e)=>{
+  const handleMdiscriptionChange = (e) => {
+    setupdateMdiscription(e.target.value);
+  }
+  const handleScientificcahnge = (e) => {
     setupdatedScienticname(e.target.value);
   }
 
   const handleDescriptionChange = (e) => {
     setUpdatedDescription(e.target.value);
   };
-const handleimpdescriptionchange =(e)=>{
-  setupdateimpdescription(e.target.value);
-}
+  const handleimpdescriptionchange = (e) => {
+    setupdateimpdescription(e.target.value);
+  }
   const handleRemovePhoto = (indexToRemove) => {
     const updatedPhotosCopy = updatePhotos.filter((_, index) => index !== indexToRemove);
     setUpdatedPhotos(updatedPhotosCopy);
@@ -260,8 +280,8 @@ const handleimpdescriptionchange =(e)=>{
       setTimeout(() => {
         setUpdatedTitle(response.data.product.title);
         setupdatedScienticname(response.data.product.scienticName);
-       setupdateMname(response.data.product.Mname);
-       setupdateMdiscription(response.data.product.Mdiscription);
+        setupdateMname(response.data.product.Mname);
+        setupdateMdiscription(response.data.product.Mdiscription);
         setUpdatedDescription(response.data.product.description);
         setupdateimpdescription(response.data.product.impdescription)
         setUpdatedPhotos(response.data.product.photos);
@@ -327,11 +347,11 @@ const handleimpdescriptionchange =(e)=>{
 
       const response = await axios.put(`${process.env.REACT_APP_BASE_URL}/updateProduct/${_Id}`, {
         title: updatedTitle,
-        scienticName:updatedScienticname,
-        Mname:updateMname,
-        Mdiscription:updateMdiscription,
+        scienticName: updatedScienticname,
+        Mname: updateMname,
+        Mdiscription: updateMdiscription,
         description: updatedDescription,
-        impdescription:updateimpdescription,
+        impdescription: updateimpdescription,
         photos: updatePhotos,
         Pots: pots,
         FeatureTag: featureTags,
@@ -494,28 +514,28 @@ const handleimpdescriptionchange =(e)=>{
   const [featureNames, setFeatureNames] = useState([]);
   const fetchFeatureNames = () => {
     axios.get(`${process.env.REACT_APP_BASE_URL}/getFeatures`)
-        .then((response) => {
-            // Filter out duplicates and null values
-            const uniqueFeatureNames = response.data
-                .filter((name, index, self) => self.indexOf(name) === index && name !== null);
+      .then((response) => {
+        // Filter out duplicates and null values
+        const uniqueFeatureNames = response.data
+          .filter((name, index, self) => self.indexOf(name) === index && name !== null);
 
-           // Set the initial value to the first feature name
+        // Set the initial value to the first feature name
         if (uniqueFeatureNames.length > 0) {
           setSelectedFeature(uniqueFeatureNames[0]);
         }
 
-            // Convert the Set to an array for rendering
-            setFeatureNames([...uniqueFeatureNames]);
-        })
-        .catch((error) => {
-            // toast.error('Error fetching feature names:', error);
-        });
-};
+        // Convert the Set to an array for rendering
+        setFeatureNames([...uniqueFeatureNames]);
+      })
+      .catch((error) => {
+        // toast.error('Error fetching feature names:', error);
+      });
+  };
 
 
   return (
     <Wrapper>
-      <ToastContainer/>
+      <ToastContainer />
       <div style={{ padding: '10px' }}>
 
         {isLoading && <CircularProgress style={{ marginLeft: '10px' }} />}
@@ -554,7 +574,7 @@ const handleimpdescriptionchange =(e)=>{
                   />
                   {/* Include your delete button here if needed */}
                 </div>
-                
+
                 <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
                   <TextField
                     label="Meta Description"
@@ -625,29 +645,29 @@ const handleimpdescriptionchange =(e)=>{
                 <div style={{ paddingTop: '10px', marginTop: '10px' }}>
                   <h3 style={{ marginTop: '5px' }}>Feature Tags</h3>
                   {featureTags.map((tag, index) => (
-        <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-          <Select
-            label={`Tag ${index + 1}`}
-            value={tag}
-            onChange={(e) => {
-              const selectedValue = e.target.value;
-              const selectedObject = featureNames.find(feature => feature.name === selectedValue);
-              setSelectedFeature(selectedObject);
-              handleFeatureTagChange(index, selectedValue);
-            }}
-            style={{ width: '70%', marginRight: '10px' }}
-          >
-            {featureNames.map((feature, nameIndex) => (
-              <MenuItem key={nameIndex} value={feature.name}>
-                {feature.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <IconButton color="secondary" onClick={() => handleRemoveFeatureTag(index)}>
-            {/* Your icon component (DeleteIcon) */}<DeleteIcon/>
-          </IconButton>
-        </div>
-      ))}
+                    <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+                      <Select
+                        label={`Tag ${index + 1}`}
+                        value={tag}
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+                          const selectedObject = featureNames.find(feature => feature.name === selectedValue);
+                          setSelectedFeature(selectedObject);
+                          handleFeatureTagChange(index, selectedValue);
+                        }}
+                        style={{ width: '70%', marginRight: '10px' }}
+                      >
+                        {featureNames.map((feature, nameIndex) => (
+                          <MenuItem key={nameIndex} value={feature.name}>
+                            {feature.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      <IconButton color="secondary" onClick={() => handleRemoveFeatureTag(index)}>
+                        {/* Your icon component (DeleteIcon) */}<DeleteIcon />
+                      </IconButton>
+                    </div>
+                  ))}
                   <Button variant="contained" color="success" onClick={handleAddFeatureTag}>
                     Add Feature Tag
                   </Button>
@@ -674,6 +694,7 @@ const handleimpdescriptionchange =(e)=>{
                       onChange={(e) => handleCareNameChange(index, e.target.value)}
                       style={{ marginBottom: '8px', width: '100%' }}
                     />
+
                     <Grid>
                       <TextField
                         label="Description"
@@ -701,9 +722,9 @@ const handleimpdescriptionchange =(e)=>{
               </div>
 
               <div style={{ paddingTop: '20px' }}>
-               
 
-               <UpdateCategories/>
+
+                <UpdateCategories />
 
                 {/* {lengthList.map((item, index) => (
                   <div key={index} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '15px', borderRadius: '5px' }}>
@@ -738,30 +759,48 @@ const handleimpdescriptionchange =(e)=>{
                 ))}<IconButton onClick={handleOpenDialog2} style={{ borderRadius: '50%' }}>
                   <AddIcon style={{ color: 'black' }} />
                 </IconButton> */}
-             
+
               </div>
-              
+
 
             </Grid>
-           
-            
+
+
           </Grid>
-<div style={{padding:'20px'}}>
-<h3 style={{ marginTop: '20px', width: "200px" }}>Product Dimensions</h3>
-            <Updatedimensions/>
-</div>
+          <div style={{ padding: '20px' }}>
+            <h3 style={{ marginTop: '20px', width: "200px" }}>Product Dimensions</h3>
+            <Updatedimensions />
+          </div>
           <Dialog open={openDialog} onClose={handleCloseDialog}>
             <DialogTitle>Add New Care</DialogTitle>
             <DialogContent>
               <div style={{ paddingTop: '10px' }}>
-                <TextField
+                {/* <TextField
                   label="New Care Name"
                   variant="outlined"
                   fullWidth
                   name="name"
                   value={plantcareData.name}
                   onChange={handleInputChange}
-                />
+                /> */}
+
+                <select
+                  className="select-dropdown"
+                  value={plantcareData.name}
+                  onChange={handleInputChange}
+                  name="name"
+                >
+                  <option value="" disabled>
+                    Select an option
+                  </option>
+                  {plantcareNames.map((name, index) => (
+                    <option key={index} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+
+
               </div>
               <div style={{ paddingTop: '10px' }}>
                 <TextField
