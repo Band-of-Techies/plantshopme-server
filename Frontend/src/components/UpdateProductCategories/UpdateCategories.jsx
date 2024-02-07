@@ -126,7 +126,8 @@ const UpdateCategories = () => {
 
   const handleSearch = async () => {
 
-    const productName  = localStorage.getItem('PNAMES');
+    //const productName  = localStorage.getItem('PNAMES');
+    const SKU  = localStorage.getItem('SKU');
 
     try {
       const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/getProductDetails`, {

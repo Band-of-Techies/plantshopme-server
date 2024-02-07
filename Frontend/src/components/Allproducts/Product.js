@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const Product = ({ setIsDelete, photos, title, price, _id, flashSaleInfo, pots, allLengths, category, maincategory, subcategory, onDelete }) => {
+const Product = ({ setIsDelete, photos, title, price, _id,SKU, flashSaleInfo, pots, allLengths, category, maincategory, subcategory, onDelete }) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
 
@@ -11,6 +11,7 @@ const Product = ({ setIsDelete, photos, title, price, _id, flashSaleInfo, pots, 
   const handlelocal = async () => {
   localStorage.setItem('pId', _id);
   localStorage.setItem('PNAMES', title);
+  localStorage.setItem('SKU', SKU);
   // window.location.href = `/update-product/${_id}/${title}`;
 
   }
