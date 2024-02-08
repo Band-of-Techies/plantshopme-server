@@ -73,6 +73,11 @@ const productSchema = new mongoose.Schema(
     currency: {
       type: String,
     },
+    WhatsappMsg: {
+      type: String,
+      default:'false'
+      
+    },
   },
   {
     timestamps: true,

@@ -266,6 +266,8 @@ const ProductUpdateForm = () => {
     }
   };
 
+  const [whatsappMsg, setWhatsappMsg] = useState(false);
+
   const handleRefresh = async () => {
     const productIdFromLocalStorage = localStorage.getItem('selectedProductId');
 
@@ -289,7 +291,7 @@ const ProductUpdateForm = () => {
         setFeatureTags(response.data.product.FeatureTag || []);
         handlePlantCare(); // Typo: Corrected the function name
         handleLengthList();
-
+        setWhatsappMsg(response.data.product.WhatsappMsg === 'true');
 
 
         setContentVisible(true);
@@ -355,9 +357,16 @@ const ProductUpdateForm = () => {
         photos: updatePhotos,
         Pots: pots,
         FeatureTag: featureTags,
+        WhatsappMsg:whatsappMsg,
       });
 
       toast.success('Product Details updated:', response.data);
+       // Update state of WhatsApp messaging checkbox based on API response
+    if (response.data.WhatsappMsg === 'true') {
+      setWhatsappMsg(true);
+    } else {
+      setWhatsappMsg(false);
+    }
 
       for (const care of careNames) {
         await handleUpdatePlantCare(care._id, care.careName, care.caredes);
@@ -620,27 +629,19 @@ const ProductUpdateForm = () => {
                   />
                 </div>
 
-                {/* <div style={{ paddingTop: '10px' }}>
-                  <h3>Pots</h3>
-                  {pots.map((pot, index) => (
-                    <div key={index} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-                      <TextField
-                        label={`Pot ${index + 1}`}
-                        value={pot}
-                        onChange={(e) => handlePotChange(index, e.target.value)}
-                        style={{ width: '70%', marginRight: '10px', marginTop: '10px' }}
-                      />
-                      <IconButton color="secondary" onClick={() => handleRemovePot(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
-                  ))}
-                  <div style={{ paddingTop: '10px' }}>
-                    <IconButton color="success" onClick={handleAddPot}>
-                      <AddIcon />
-                    </IconButton>
-                  </div>
-                </div> */}
+                <div style={{ paddingTop: '10px' }}>
+                  <h3>Whatsapp Messaging</h3>
+                  <div>
+                  Whatsapp Messaging
+            <input
+              type="checkbox"
+              checked={whatsappMsg}
+              onChange={(e) => setWhatsappMsg(e.target.checked)}
+              style={{padding:'10px'}}
+            />
+          </div>
+                  
+                </div>
 
                 <div style={{ paddingTop: '10px', marginTop: '10px' }}>
                   <h3 style={{ marginTop: '5px' }}>Feature Tags</h3>

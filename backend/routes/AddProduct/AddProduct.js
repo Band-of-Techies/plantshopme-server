@@ -155,6 +155,8 @@ router.post('/addOtherProduct', upload.fields([
       scienticName: req.query.scienticName,
       impdescription: req.query.impdescription,
       ptype: 'Other Product',
+      WhatsappMsg:req.query.WhatsappMsg,
+
     });
 
     const savedProduct = await newProduct.save();
@@ -290,6 +292,9 @@ router.get('/getAllProducts', async (req, res) => {
 
   res.json({ products: products, totalProducts, numOfPages });
 });
+
+
+
 
 
 
@@ -503,7 +508,7 @@ router.get('/getFeaturedProducts', async (req, res) => {
 router.put('/updateProduct/:id', async (req, res) => {
   try {
     const { id } = req.params; // Get the product ID from the URL parameter
-    const { title,scienticName,Mname,impdescription,Mdiscription, description, maincategory, category, subcategory, stock, FeatureTag, length, Pots, careType, careName, caredes, price, currency } = req.body;
+    const { WhatsappMsg,title,scienticName,Mname,impdescription,Mdiscription, description, maincategory, category, subcategory, stock, FeatureTag, length, Pots, careType, careName, caredes, price, currency } = req.body;
 
     const updatedFields = {
       title,
@@ -523,7 +528,7 @@ router.put('/updateProduct/:id', async (req, res) => {
       careName,
       caredes,
       price,
-      
+      WhatsappMsg,
       currency,
     };
 

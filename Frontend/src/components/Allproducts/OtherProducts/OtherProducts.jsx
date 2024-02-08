@@ -723,7 +723,13 @@ const OtherProducts = () => {
 
 
 
-    //ADDING PRODUCT ***********   
+    //ADDING PRODUCT *********** 
+
+    const [whatsappMsg, setWhatsappMsg] = useState(false); // State variable to store checkbox value
+
+    const handleCheckboxChange = (e) => {
+        setWhatsappMsg(e.target.checked); // Update whatsappMsg state based on checkbox status
+    };
 
     const uploadFiles = async () => {
         try {
@@ -746,7 +752,7 @@ const OtherProducts = () => {
                 params: {
                     title: productTitle,
                     scienticName: scientific,
-                    impdescription: SKU ,
+                    impdescription: SKU,
                     Mname: Mname,
                     Mdiscription: Mdiscription,
                     description: description,
@@ -762,6 +768,7 @@ const OtherProducts = () => {
                     caredes: plantcareData.description,
                     price: productprice,
                     currency: SelectedCurrency1,
+                    WhatsappMsg: whatsappMsg,
 
                 },
             });
@@ -1196,7 +1203,7 @@ const OtherProducts = () => {
 
     const handleimportantInputChange = (e) => {
         const sanitizedContent = DOMPurify.sanitize(e.target.innerHTML);
-  setSKU(sanitizedContent);
+        setSKU(sanitizedContent);
     };
     {/*****PRODUCT CATEGORY*******/ }
 
@@ -1503,7 +1510,15 @@ const OtherProducts = () => {
 
                     {/* Third Column */}
                     <div className='product-additional'>
-
+                        <div style={{ padding: '10px', backgroundColor: '#b3ffb3' }}>
+                            <label style={{ marginLeft: '10px', marginTop: '10px' }}>Whatsapp Messaging</label>
+                            <input
+                                type="checkbox"
+                                name="Exclusive"
+                                onChange={handleCheckboxChange} // Add onChange event handler to update state
+                                checked={whatsappMsg} // Bind checkbox to state variable
+                            />
+                        </div>
 
                         {/* Plot Section */}
 

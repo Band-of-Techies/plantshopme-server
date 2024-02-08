@@ -115,36 +115,93 @@ function AddCategory() {
     fetchSubcategories2(selectedCategory, subcategoryName);
   };
 
+  
+// const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     // Check if the mainCategory already exists in categories
+//     if (categories.some(category => category.name === mainCategory)) {
+//       toast.error('Category already exists.');
+//       setSuccessMessage('');
+//       return;
+//     }
+
+//     try {
+//       const formData = new FormData();
+//       formData.append('name', mainCategory);
+//       formData.append('image', selectedIconFile); // Add the selected icon file to the form data
+//       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/addMainCategory`, {
+//         method: 'POST',
+//         body: formData, // Use form data instead of JSON.stringify
+
+//       });
+
+//       if (response.ok) {
+//         // Clear the input field on success
+//         setMainCategory('');
+//         setSelectedIconFile(null); // Clear the selected icon file
+//         setErrorMessage('');
+//         toast.success('Category added successfully.');
+
+//         // Add the new category to the categories state
+//         setCategories([...categories, { name: mainCategory }]);
+
+//         // Fetch the updated list of categories and update the state
+//         await fetchCategories();
+//       } else {
+//         // Handle any errors here
+//         toast.error('Failed to add Main Category PLZ check Icon Added or not');
+//         setErrorMessage('Failed to add category.');
+//         setSuccessMessage('');
+//       }
+//     } catch (error) {
+//       if (error.response) {
+//         // The request was made and the server responded with a status code
+//         // Display the error message on the frontend using toast
+//         toast.error('Error: ' + error.response.data.error);
+//     } else if (error.request) {
+//         // The request was made but no response was received
+//         toast.error('No response received from the server.');
+//     } else {
+//         // Something happened in setting up the request that triggered an Error
+//         toast.error('Error during request setup: ' + error.message);
+//     }
+//       setSuccessMessage('');
+//     }
+//   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Trim extra spaces after the sentence
+    const trimmedMainCategory = mainCategory.trim().replace(/\s{2,}/g, ' ');
+  
     // Check if the mainCategory already exists in categories
-    if (categories.some(category => category.name === mainCategory)) {
+    if (categories.some(category => category.name === trimmedMainCategory)) {
       toast.error('Category already exists.');
       setSuccessMessage('');
       return;
     }
-
+  
     try {
       const formData = new FormData();
-      formData.append('name', mainCategory);
+      formData.append('name', trimmedMainCategory);
       formData.append('image', selectedIconFile); // Add the selected icon file to the form data
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/addMainCategory`, {
         method: 'POST',
         body: formData, // Use form data instead of JSON.stringify
-
       });
-
+  
       if (response.ok) {
         // Clear the input field on success
         setMainCategory('');
         setSelectedIconFile(null); // Clear the selected icon file
         setErrorMessage('');
         toast.success('Category added successfully.');
-
+  
         // Add the new category to the categories state
-        setCategories([...categories, { name: mainCategory }]);
-
+        setCategories([...categories, { name: trimmedMainCategory }]);
+  
         // Fetch the updated list of categories and update the state
         await fetchCategories();
       } else {
@@ -158,17 +215,80 @@ function AddCategory() {
         // The request was made and the server responded with a status code
         // Display the error message on the frontend using toast
         toast.error('Error: ' + error.response.data.error);
-    } else if (error.request) {
+      } else if (error.request) {
         // The request was made but no response was received
         toast.error('No response received from the server.');
-    } else {
+      } else {
         // Something happened in setting up the request that triggered an Error
         toast.error('Error during request setup: ' + error.message);
-    }
+      }
       setSuccessMessage('');
     }
   };
+  
 
+  // const handleSubmit2 = async (e) => {
+  //   e.preventDefault();
+  //   if (subcategories.some(subcategory => subcategory.name === newCategory)) {
+  //     toast.error('Category already exists.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+  //   // Check if the newCategory name is empty
+  //   if (!newCategory.trim()) {
+  //     toast.error('Category name cannot be empty.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+
+  //   if (!selectedCategory) {
+  //     toast.error('Please select a parent category.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+
+  //   try {
+  //     // Send a POST request to your Express API to add a new subcategory
+  //     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/addCategory`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ name: newCategory, parentCategory: selectedCategory }),
+  //     });
+
+  //     if (response.ok) {
+  //       // Clear the input field on success
+  //       setNewCategory('');
+  //       setErrorMessage('');
+  //       toast.success('Category added successfully.');
+
+  //       // Add the new subcategory to the subcategories state
+  //       setSubcategories([...subcategories, { name: newCategory }]);
+
+  //       // Fetch the updated list of categories and update the state
+  //       await fetchCategories();
+  //     } else {
+  //       // Handle any errors here
+  //       console.error('Failed to add Category');
+  //       toast.error('Failed to add category.');
+  //       setSuccessMessage('');
+  //     }
+  //   } catch (error) {
+  //     if (error.response) {
+  //       // The request was made and the server responded with a status code
+  //       // Display the error message on the frontend using toast
+  //       toast.error('Error: ' + error.response.data.error);
+  //   } else if (error.request) {
+  //       // The request was made but no response was received
+  //       toast.error('No response received from the server.');
+  //   } else {
+  //       // Something happened in setting up the request that triggered an Error
+  //       toast.error('Error during request setup: ' + error.message);
+  //   }
+  //     setSuccessMessage('');
+  //   }
+  // };
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
@@ -190,6 +310,9 @@ function AddCategory() {
       return;
     }
 
+    // Trim extra spaces after the sentence
+    const trimmedNewCategory = newCategory.trim().replace(/\s{2,}/g, ' ');
+
     try {
       // Send a POST request to your Express API to add a new subcategory
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/addCategory`, {
@@ -197,7 +320,7 @@ function AddCategory() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: newCategory, parentCategory: selectedCategory }),
+        body: JSON.stringify({ name: trimmedNewCategory, parentCategory: selectedCategory }),
       });
 
       if (response.ok) {
@@ -207,7 +330,7 @@ function AddCategory() {
         toast.success('Category added successfully.');
 
         // Add the new subcategory to the subcategories state
-        setSubcategories([...subcategories, { name: newCategory }]);
+        setSubcategories([...subcategories, { name: trimmedNewCategory }]);
 
         // Fetch the updated list of categories and update the state
         await fetchCategories();
@@ -233,6 +356,73 @@ function AddCategory() {
     }
   };
 
+
+  // const handleSubmit3 = async (e) => {
+  //   e.preventDefault();
+  //   if (subcategories2.some(category => category.name === newSubCategory)) {
+  //     toast.error('Category already exists.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+  //   if (!newSubCategory.trim()) {
+  //     toast.error('Subcategory name cannot be empty.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+
+  //   if (!selectedCategory || !selectedSubcategory) {
+  //     toast.error('Please select both parent category and subcategory.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/subCategory`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         name: newSubCategory,
+  //         parentCategory: selectedCategory,
+  //         Category: selectedSubcategory,
+  //       }),
+  //     });
+
+  //     if (response.ok) {
+  //       setNewSubCategory('');
+  //       setErrorMessage('');
+  //       toast.success('Subcategory added successfully.');
+
+  //       // Add the new subcategory to both subcategories and subcategories2 states
+  //       // setSubcategories([...subcategories, { name: newSubCategory }]);
+  //       setSubcategories2([...subcategories2, { name: newSubCategory }]);
+
+  //       // Fetch the updated list of categories and update the state
+  //       // await fetchCategories();
+  //     } else {
+  //       console.error('Failed to add Subcategory');
+  //       toast.error('Failed to add subcategory.');
+  //       setSuccessMessage('');
+  //     }
+  //   } catch (error) {
+  //     if (error.response) {
+  //       // The request was made and the server responded with a status code
+  //       // Display the error message on the frontend using toast
+  //       toast.error('Error: ' + error.response.data.error);
+  //   } else if (error.request) {
+  //       // The request was made but no response was received
+  //       toast.error('No response received from the server.');
+  //   } else {
+  //       // Something happened in setting up the request that triggered an Error
+  //       toast.error('Error during request setup: ' + error.message);
+  //   }
+  //     setSuccessMessage('');
+  //   }
+  // };
+
+  // Function to open the dialog for editing Main category
+  
   const handleSubmit3 = async (e) => {
     e.preventDefault();
     if (subcategories2.some(category => category.name === newSubCategory)) {
@@ -245,13 +435,16 @@ function AddCategory() {
       setSuccessMessage('');
       return;
     }
-
+  
     if (!selectedCategory || !selectedSubcategory) {
       toast.error('Please select both parent category and subcategory.');
       setSuccessMessage('');
       return;
     }
-
+  
+    // Trim extra spaces after the sentence
+    const trimmedNewSubCategory = newSubCategory.trim().replace(/\s{2,}/g, ' ');
+  
     try {
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/subCategory`, {
         method: 'POST',
@@ -259,21 +452,21 @@ function AddCategory() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: newSubCategory,
+          name: trimmedNewSubCategory,
           parentCategory: selectedCategory,
           Category: selectedSubcategory,
         }),
       });
-
+  
       if (response.ok) {
         setNewSubCategory('');
         setErrorMessage('');
         toast.success('Subcategory added successfully.');
-
+  
         // Add the new subcategory to both subcategories and subcategories2 states
-        // setSubcategories([...subcategories, { name: newSubCategory }]);
-        setSubcategories2([...subcategories2, { name: newSubCategory }]);
-
+        // setSubcategories([...subcategories, { name: trimmedNewSubCategory }]);
+        setSubcategories2([...subcategories2, { name: trimmedNewSubCategory }]);
+  
         // Fetch the updated list of categories and update the state
         // await fetchCategories();
       } else {
@@ -286,18 +479,18 @@ function AddCategory() {
         // The request was made and the server responded with a status code
         // Display the error message on the frontend using toast
         toast.error('Error: ' + error.response.data.error);
-    } else if (error.request) {
+      } else if (error.request) {
         // The request was made but no response was received
         toast.error('No response received from the server.');
-    } else {
+      } else {
         // Something happened in setting up the request that triggered an Error
         toast.error('Error during request setup: ' + error.message);
-    }
+      }
       setSuccessMessage('');
     }
   };
-
-  // Function to open the dialog for editing Main category
+  
+  
   const openDialog = () => {
     setIsDialogOpen(true);
 
@@ -357,23 +550,57 @@ function AddCategory() {
   // };
 
 
+  // const handleCategoryUpdate = async () => {
+  //   try {
+  //     setIsLoading(true);
+
+  //     const formData = new FormData();
+  //     formData.append('name', selectedCategory);
+  //     formData.append('photo', selectedImage);
+
+  //     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/MainCategory/${categoryId}`, {
+  //       method: 'PUT',
+  //       body: formData,
+  //     });
+
+  //     if (response.ok) {
+  //       setErrorMessage('');
+  //       toast.success('Category updated successfully.');
+
+  //       await fetchCategories();
+  //       closeDialog();
+  //     } else {
+  //       console.error('Failed to update Category');
+  //       toast.error('Failed to update category.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     toast.error('Error occurred while updating category.', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleCategoryUpdate = async () => {
     try {
       setIsLoading(true);
-
+  
+      // Trim extra spaces after the sentence
+      const trimmedSelectedCategory = selectedCategory.trim();
+  
       const formData = new FormData();
-      formData.append('name', selectedCategory);
+      formData.append('name', trimmedSelectedCategory);
       formData.append('photo', selectedImage);
-
+  
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/MainCategory/${categoryId}`, {
         method: 'PUT',
         body: formData,
       });
-
+  
       if (response.ok) {
         setErrorMessage('');
         toast.success('Category updated successfully.');
-
+  
         await fetchCategories();
         closeDialog();
       } else {
@@ -387,22 +614,57 @@ function AddCategory() {
       setIsLoading(false);
     }
   };
+  
+
+  // const handleCategoryUpdate1 = async () => {
+  //   try {
+  //     // Send a PUT request to update the category
+  //     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/updateCategory/${categoryId}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ name: selectedCategory, }),
+  //     });
+
+  //     if (response.ok) {
+  //       setErrorMessage('');
+  //       toast.success('Category updated successfully.');
+
+  //       // Fetch the updated list of categories and update the state
+  //       await fetchSubcategories();
+  //       closeDialog1();
+  //     } else {
+  //       // Handle any errors here
+  //       console.error('Failed to update Category');
+  //       toast.error('Failed to update category.');
+  //       setSuccessMessage('');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     toast.error('Error occurred while updating category.', error);
+  //     setSuccessMessage('');
+  //   }
+  // };
 
   const handleCategoryUpdate1 = async () => {
     try {
+      // Trim extra spaces after the sentence
+      const trimmedSelectedCategory = selectedCategory.trim();
+  
       // Send a PUT request to update the category
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/updateCategory/${categoryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: selectedCategory, }),
+        body: JSON.stringify({ name: trimmedSelectedCategory }),
       });
-
+  
       if (response.ok) {
         setErrorMessage('');
         toast.success('Category updated successfully.');
-
+  
         // Fetch the updated list of categories and update the state
         await fetchSubcategories();
         closeDialog1();
@@ -418,28 +680,64 @@ function AddCategory() {
       setSuccessMessage('');
     }
   };
+  
 
+  // const handleCategoryUpdate2 = async () => {
+  //   try {
+  //     // Send a PUT request to update the category
+  //     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/subCategory/${categoryId}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ name: selectedCategory }),
+  //     });
+
+  //     if (response.ok) {
+  //       setErrorMessage('');
+  //       toast.success('Category updated successfully.');
+  //       closeDialog2();
+  //       // Fetch the updated list of categories and update the state
+
+
+  //       // Fetch the updated list of categories and update the state
+  //       await fetchSubcategories2();
+
+  //     } else {
+  //       // Handle any errors here
+  //       console.error('Failed to update Category');
+  //       toast.error('Failed to update category.');
+  //       setSuccessMessage('');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     toast.error('Error occurred while updating category.', error);
+  //     setSuccessMessage('');
+  //   }
+  // };
+
+  // Function to handle category deletion
+  
   const handleCategoryUpdate2 = async () => {
     try {
+      // Trim extra spaces after the sentence
+      const trimmedSelectedCategory = selectedCategory.trim();
+  
       // Send a PUT request to update the category
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/subCategory/${categoryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: selectedCategory }),
+        body: JSON.stringify({ name: trimmedSelectedCategory }),
       });
-
+  
       if (response.ok) {
         setErrorMessage('');
         toast.success('Category updated successfully.');
         closeDialog2();
         // Fetch the updated list of categories and update the state
-
-
-        // Fetch the updated list of categories and update the state
         await fetchSubcategories2();
-
       } else {
         // Handle any errors here
         console.error('Failed to update Category');
@@ -452,8 +750,8 @@ function AddCategory() {
       setSuccessMessage('');
     }
   };
-
-  // Function to handle category deletion
+  
+  
   const handleCategoryDelete = async () => {
     try {
       if (!selectedCategory) {
@@ -843,6 +1141,9 @@ function AddCategory() {
               <DialogActions>
                 <Button onClick={closeDialog} color="primary">
                   Cancel
+                </Button>
+                <Button onClick={handleCategoryDelete} color="secondary">
+                  Delete
                 </Button>
                 <Button onClick={handleCategoryUpdate} color="primary" disabled={isLoading}>
                   {isLoading ? <CircularProgress size={24} /> : 'Update'}

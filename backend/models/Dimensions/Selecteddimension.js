@@ -9,7 +9,7 @@ const selectedLengthDetailsSchema = new Schema(
     Field2: { type: String },
     Value1: { type: String },
     Value2: { type: String },
-    Price: { type: String,required: true},
+    Price: { type: Number,required: true},
     Color: { type: String },
     productName: { type: String },
     subCategory: { type: String },
