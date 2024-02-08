@@ -11,94 +11,74 @@ import {formatISO9075} from "date-fns"
 
 
 const AllBlogs = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [blog, setBlog] = useState([]); // Ensure blog is initialized as an array
 
-  const navigate = useNavigate()
-  const {id} = useParams()
-  const [blog,setBlog] =useState([])
-  const myRef = useRef(null);
+  // Function to fetch all blogs
+  const getAllBlogs = async () => {
+    try {
+      const resp = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/post`);
+      setBlog(resp.data);
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    }
+  };
 
+  useEffect(() => {
+    getAllBlogs();
+  }, []);
 
+  const handleButton = (prop) => {
+    navigate(`/blogs/edit-post/${prop._id}`);
+  };
 
+  // Helper function to format date and time
+  const formatDateTime = (dateTime) => {
+    return moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+  };
 
-const getAllBlogs = async()=>{
-  try {
-    const resp = await axios.get(`${process.env.REACT_APP_BASE_URL}/api/post`)
-    setBlog(resp.data)
-    return resp.data
-} catch (error) {
-    return error
-}
-}
+  // Helper function to remove HTML tags from summary
+  const removeHtmlTags = (htmlString) => {
+    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+    return doc.body.textContent || '';
+  };
 
-useEffect(()=>{
-  getAllBlogs()
-},[])
-
-  const handleButton=(prop)=>{
-    navigate(`/blogs/edit-post/${prop._id}`)
-  }
-
-const dateAndTime = (prop)=>{
-  const formattedDateTime = moment(prop).format("YYYY-MM-DD HH:mm:ss");
-  return formattedDateTime
-}
-const removeHtmlTags = (htmlString) => {
-  const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-  return doc.body.textContent || '';
-};
-console.log(blog);
-    return (
-      <>
-       <div className='single'>
+  return (
+    
+      <div className='single'>
         <Sidebar />
-        <div className='singleContainer'>
-        <Navbar />
+        <div class='singleContainer'>
+          <Navbar />
+        {/* Sidebar and Navbar components */}
         <MainWrapper>
-        <Wrapper>
-        <div className='header-div'>
-       <h4>Recent Posts</h4>
-        </div>
-       <div className='post-container'>
-       {blog.map((blogs,idx)=>{
-        const {_id,title,summary,cover,content,createdAt,author,photo,tags} =blogs
-        return(
-        <div className="post" key={idx}>
-        <div className="image">
-          <Link to= {`/blogs/post/${_id}`}>
-          <img src={photo} alt="blog" />
-          </Link>
-        </div>
-        <div className="texts">
-        <Link to= {`/blogs/post/${_id}`}>
-          <h5 className='title'>{title}</h5>
-          <p className="info"> 
-          <p className='author'>{author?.name}</p>
-          <p className='time'>{formatISO9075(new Date (createdAt),'MMM d,yyyy HH:mm')}</p>
-          </p>
-          <div className='tags'>
-          {tags&&tags.map((tag,idx)=>{
-            return(
-                <p key={idx} className='tag'>{tag}</p>
-            )
-          })}
-           </div>
-          <p className="summary">{summary}</p>
-          </Link>
-          <Link to={`/blogs/post/${_id}`} className='btn-read-more'>View & Edit</Link>
-        </div>
+          <Wrapper>
+            <div className='header-div'>
+              <h4>Recent Posts</h4>
+            </div>
+            <div className='post-container'>
+              {/* Check if blog is an array before mapping over it */}
+              {Array.isArray(blog) && blog.length > 0 ? (
+                blog.map((blogs, idx) => {
+                  const { _id, title, summary, cover, content, createdAt, author, photo, tags } = blogs;
+                  return (
+                    <div className="post" key={idx}>
+                      {/* Blog content */}
+                    </div>
+                  );
+                })
+              ) : (
+                <div>No blogs available.</div>
+              )}
+            </div>
+          </Wrapper>
+        </MainWrapper>
       </div>
-            )
-        })}
-       </div>
-    </Wrapper>
-    </MainWrapper>
-      </div>
-      </div>
-       </>
-    )
+    </div>
+  );
 }
 
-export default AllBlogs
+export default AllBlogs;
 
 const MainWrapper = styled.div`
 width:100%;
