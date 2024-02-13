@@ -38,26 +38,34 @@ const Allproducts = () => {
     const [isDelete,setIsDelete] =useState(false)
 
    
-   const getProducts = async()=>{
-    setLoading(true);
-    let url=`${process.env.REACT_APP_BASE_URL}/getAllProducts?maincategory=${encodeURIComponent(initialState.mainCategory)}&category=${encodeURIComponent(initialState.category)}&subcategory=${encodeURIComponent(initialState.subCategory)}&sort=${initialState.sort}&page=${initialState.page}&min_price=${initialState.min_price}&max_price=${initialState.max_price}&FeatureTag=${initialState.featureTag}`;
-   
-    if(initialState.search){
-      url =url + `&search=${initialState.search}`
-    }
-    try {
-       const resp = await axios.get(url,
-      );
-      setLoading(false);
-      setPages(resp.data.numOfPages)
-      setProductCount(resp.data.totalProducts)
-      setAllProduct(resp.data.products)
-      return resp.data;
-    } catch (error) {
-        setLoading(false);
-      return error
-    }
-   }
+    const getProducts = async () => {
+      setLoading(true);
+      let url = `${process.env.REACT_APP_BASE_URL}/getAllProducts?maincategory=${encodeURIComponent(initialState.mainCategory)}&category=${encodeURIComponent(initialState.category)}&subcategory=${encodeURIComponent(initialState.subCategory)}&sort=${initialState.sort}&page=${initialState.page}&min_price=${initialState.min_price}&max_price=${initialState.max_price}&FeatureTag=${initialState.featureTag}`;
+  
+      if (initialState.search) {
+          url = url + `&search=${initialState.search}`;
+      }
+  
+      try {
+          const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+  
+          const resp = await axios.get(url, {
+              headers: {
+                  'Authorization': `${token}`, // Include the token in the Authorization header
+              },
+          });
+  
+          setLoading(false);
+          setPages(resp.data.numOfPages);
+          setProductCount(resp.data.totalProducts);
+          setAllProduct(resp.data.products);
+          return resp.data;
+      } catch (error) {
+          setLoading(false);
+          return error;
+      }
+  };
+  
 
    useEffect(()=>{
     getProducts()

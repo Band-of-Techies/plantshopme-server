@@ -26,26 +26,32 @@ const Product = ({ setIsDelete, photos, title, price, _id,SKU, flashSaleInfo, po
 
     // If the user clicks "Cancel," do nothing
     if (!isConfirmed) {
-      return;
+        return;
     }
 
     setIsDelete(true);
 
     try {
-      console.log('Deleting product...');
-      await axios.delete(`${process.env.REACT_APP_BASE_URL}/deleteProduct/${_id}`);
-      console.log('Product deleted successfully!');
-      setIsDelete(false);
-      window.alert('Product deleted successfully!');
-      onDelete(_id);
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    } finally {
-      console.log('Finished delete operation');
-      setIsDelete(false);
-    }
+        // Retrieve the token from localStorage
+        const token = localStorage.getItem('token');
 
-  };
+        console.log('Deleting product...');
+        await axios.delete(`${process.env.REACT_APP_BASE_URL}/deleteProduct/${_id}`, {
+            headers: {
+                'Authorization': `${token}`, // Include the token in the Authorization header
+            },
+        });
+        console.log('Product deleted successfully!');
+        setIsDelete(false);
+        window.alert('Product deleted successfully!');
+        onDelete(_id);
+    } catch (error) {
+        console.error('Error deleting product:', error);
+    } finally {
+        console.log('Finished delete operation');
+        setIsDelete(false);
+    }
+};
 
 
   return (

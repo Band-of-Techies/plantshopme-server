@@ -16,7 +16,7 @@ const checkFlashState = require('../../utils/checkFlashState')
 const SelectedDimensions = require('../../models/Dimensions/Selecteddimension')
 const AddProduct = require('../../models/AddProduct/AddProduct');
 const upload = multer({ storage: storage });
-
+const authenticateToken = require('../tokenGeneration');
 
 
 
@@ -107,7 +107,7 @@ router.post('/addProduct',  upload.fields([
 // });
 
 
-router.post('/addOtherProduct', upload.fields([
+router.post('/addOtherProduct',authenticateToken, upload.fields([
   { name: 'photos', maxCount: 10 },
 ]), async (req, res) => {
   try {
@@ -176,7 +176,7 @@ router.post('/addOtherProduct', upload.fields([
 
 
 // fetch all products based on the all the parameters which is called by the frontend
-router.get('/getAllProducts', async (req, res) => {
+router.get('/getAllProducts',authenticateToken, async (req, res) => {
   const { search, maincategory, category, subcategory, sort, FeatureTag, max_price, min_price } = req.query;
   console.log(FeatureTag);
   let queryArray = [];
@@ -827,7 +827,7 @@ router.delete('/deleteProductPhoto/:productId/:photoId', async (req, res) => {
 //   }
 // });
 
-router.delete('/deleteProduct/:id', async (req, res) => {
+router.delete('/deleteProduct/:id', authenticateToken,async (req, res) => {
   try {
     const productId = req.params.id;
     const product = await Product.findById(productId);

@@ -733,6 +733,7 @@ const OtherProducts = () => {
 
     const uploadFiles = async () => {
         try {
+            const token = localStorage.getItem('token');
             const formData = new FormData();
             selectedFiles.forEach((file) => {
                 formData.append('photos', file);
@@ -749,6 +750,9 @@ const OtherProducts = () => {
             console.log('Sanitized Content:', sanitizedContent);
             // Send a POST request to server endpoint to upload files
             await axios.post(`${process.env.REACT_APP_BASE_URL}/addOtherProduct`, formData, {
+                headers: {
+                    'Authorization': `${token}`, // Include the token in the Authorization header
+                },
                 params: {
                     title: productTitle,
                     scienticName: scientific,
@@ -769,7 +773,6 @@ const OtherProducts = () => {
                     price: productprice,
                     currency: SelectedCurrency1,
                     WhatsappMsg: whatsappMsg,
-
                 },
             });
             toast.success('Details Added successfully');
