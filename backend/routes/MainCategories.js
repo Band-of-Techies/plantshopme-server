@@ -4,7 +4,7 @@ const MainCategory = require('../models/MainCategories');
 const multer = require('multer');
 const path = require('path');
 const { storage } = require('../cloudinary/index')
-
+const authenticateToken = require('./tokenGeneration');
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, 'Icon/'); // Make sure the 'Icon' directory exists
@@ -52,8 +52,9 @@ const upload = multer({ storage: storage });
 //     res.status(400).json({ error: error.message });
 //   }
 // });
-router.post('/addMainCategory', upload.single('image'), async (req, res) => {
-  console.log('triggered');
+
+router.post('/addMainCategory',authenticateToken, upload.single('image'), async (req, res) => {
+  
   try {
     const { name } = req.body;
 

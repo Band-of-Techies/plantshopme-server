@@ -117,7 +117,7 @@ const getCustomerDataRoute = require('./routes/getCustomerData/getCustomer')
 const RoleRouter=require('./routes/RoleManagement/role')
 
 // Database connection
-
+const phonemsgRouter=require('./routes/phoneMessage');
 
 connection();
 
@@ -126,6 +126,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/auth", authRoute);
 // Mount route handlers
+app.use("/api",phonemsgRouter)
 app.use("/api",RoleRouter)
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);

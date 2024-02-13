@@ -170,8 +170,74 @@ function AddCategory() {
 //     }
 //   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  
+  //   // Trim extra spaces after the sentence
+  //   const trimmedMainCategory = mainCategory.trim().replace(/\s{2,}/g, ' ');
+  
+  //   // Check if the mainCategory already exists in categories
+  //   if (categories.some(category => category.name === trimmedMainCategory)) {
+  //     toast.error('Category already exists.');
+  //     setSuccessMessage('');
+  //     return;
+  //   }
+  
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append('name', trimmedMainCategory);
+  //     formData.append('image', selectedIconFile); // Add the selected icon file to the form data
+  //     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/addMainCategory`, {
+  //       method: 'POST',
+  //       body: formData, // Use form data instead of JSON.stringify
+  //     });
+  
+  //     if (response.ok) {
+  //       // Clear the input field on success
+  //       setMainCategory('');
+  //       setSelectedIconFile(null); // Clear the selected icon file
+  //       setErrorMessage('');
+  //       toast.success('Category added successfully.');
+  
+  //       // Add the new category to the categories state
+  //       setCategories([...categories, { name: trimmedMainCategory }]);
+  
+  //       // Fetch the updated list of categories and update the state
+  //       await fetchCategories();
+  //     } else {
+  //       // Handle any errors here
+  //       toast.error('Failed to add Main Category PLZ check Icon Added or not');
+  //       setErrorMessage('Failed to add category.');
+  //       setSuccessMessage('');
+  //     }
+  //   } catch (error) {
+  //     if (error.response) {
+  //       // The request was made and the server responded with a status code
+  //       // Display the error message on the frontend using toast
+  //       toast.error('Error: ' + error.response.data.error);
+  //     } else if (error.request) {
+  //       // The request was made but no response was received
+  //       toast.error('No response received from the server.');
+  //     } else {
+  //       // Something happened in setting up the request that triggered an Error
+  //       toast.error('Error during request setup: ' + error.message);
+  //     }
+  //     setSuccessMessage('');
+  //   }
+  // };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    // Retrieve the token from localStorage
+    const token = localStorage.getItem('token');
+  
+    // Check if the token exists
+    if (!token) {
+      // Handle case where token is not present
+      toast.error('Token is required.');
+      return;
+    }
   
     // Trim extra spaces after the sentence
     const trimmedMainCategory = mainCategory.trim().replace(/\s{2,}/g, ' ');
@@ -189,6 +255,9 @@ function AddCategory() {
       formData.append('image', selectedIconFile); // Add the selected icon file to the form data
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/addMainCategory`, {
         method: 'POST',
+        headers: {
+          'Authorization': `${token}`, // Include the token in the Authorization header
+        },
         body: formData, // Use form data instead of JSON.stringify
       });
   
@@ -206,27 +275,17 @@ function AddCategory() {
         await fetchCategories();
       } else {
         // Handle any errors here
-        toast.error('Failed to add Main Category PLZ check Icon Added or not');
+        toast.error('Failed to add Main Category. Please check if the icon is added or not.');
         setErrorMessage('Failed to add category.');
         setSuccessMessage('');
       }
     } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // Display the error message on the frontend using toast
-        toast.error('Error: ' + error.response.data.error);
-      } else if (error.request) {
-        // The request was made but no response was received
-        toast.error('No response received from the server.');
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        toast.error('Error during request setup: ' + error.message);
-      }
+      // Handle error
+      toast.error('Error occurred: ' + error.message);
       setSuccessMessage('');
     }
   };
   
-
   // const handleSubmit2 = async (e) => {
   //   e.preventDefault();
   //   if (subcategories.some(subcategory => subcategory.name === newCategory)) {
