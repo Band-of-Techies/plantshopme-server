@@ -117,20 +117,18 @@ const PaymentIntentsTable = () => {
     const apiUrl = `${process.env.REACT_APP_BASE_URL}/get-payment-intents`;
     const config = {
       headers: {
-        'Authorization': `${token}` // Include the token in the Authorization header
+        'Authorization': token // No need for string interpolation here
       }
     };
-
-
-
+  
     const params = {};
     if (selectedStartDate) params.startDate = selectedStartDate;
     if (selectedEndDate) params.endDate = selectedEndDate;
     if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
     if (selectedpaymentData) params.paymentData = selectedpaymentData;
-
+  
     axios
-      .get(apiUrl, config, { params })
+      .get(apiUrl, { params, ...config }) // Pass params as the second argument
       .then((response) => {
         console.log('Response Data:', response.data);
         setPaymentIntents(response.data);
@@ -143,7 +141,7 @@ const PaymentIntentsTable = () => {
         setLoading(false);
       });
   };
-
+  
   const decodeSpaces = (str) => str.replace(/%20/g, ' ');
 
 
