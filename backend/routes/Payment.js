@@ -18,7 +18,7 @@ const RefundData = require('../models/RefundData/RefundData')
 const generateOrderId = require('../utils/generateOrderId')
 const coinsData = require('../utils/coinsData')
 const ObjectId = require('mongoose').Types.ObjectId;
-
+const authenticateToken = require('./tokenGeneration');
 // router.post('/create-payment-intent', async (req, res) => {
 //   // console.log(req.body)
 //   try {
@@ -568,7 +568,7 @@ router.post('/create-cod-intent', async (req, res) => {
 
 
 // Backend route for getting payment intents
-router.get('/get-payment-intents', async (req, res) => {
+router.get('/get-payment-intents',authenticateToken, async (req, res) => {
   try {
     let paymentIntents;
     const { startDate, endDate, Orderstatus,paymentData } = req.query;
@@ -606,7 +606,7 @@ router.get('/get-payment-intents', async (req, res) => {
 });
 
 
-router.get('/get-payment-intent-by-id/:orderId', async (req, res) => {
+router.get('/get-payment-intent-by-id/:orderId',authenticateToken, async (req, res) => {
   try {
     const { orderId } = req.params;
 

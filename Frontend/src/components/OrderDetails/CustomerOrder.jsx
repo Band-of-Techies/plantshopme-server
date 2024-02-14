@@ -21,9 +21,15 @@ const CustomerOrder = () => {
         
         useEffect(() => {
             const fetchData = async () => {
+              const token = localStorage.getItem('token');
               try {
                 console.log('Fetching data...');
-                const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/get-payment-intent-by-id/${id}`);
+                const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/get-payment-intent-by-id/${id}`, {
+                  headers: {
+                      'Authorization': `${token}`, // Include the token in the Authorization header
+                  },
+              });
+      
                 console.log('Fetched data:', response.data);
                 
                 setData(response.data);
