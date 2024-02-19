@@ -110,37 +110,41 @@ const PaymentIntentsTable = () => {
         toast.error('Failed to update order status.');
       });
   };
-
-  const fetchPaymentIntents = () => {
-    const token = localStorage.getItem('token');
-    setLoading(true);
-    const apiUrl = `${process.env.REACT_APP_BASE_URL}/get-payment-intents`;
-    const config = {
-      headers: {
-        'Authorization': token // No need for string interpolation here
-      }
-    };
-  
-    const params = {};
-    if (selectedStartDate) params.startDate = selectedStartDate;
-    if (selectedEndDate) params.endDate = selectedEndDate;
-    if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
-    if (selectedpaymentData) params.paymentData = selectedpaymentData;
-  
-    axios
-      .get(apiUrl, { params, ...config }) // Pass params as the second argument
-      .then((response) => {
-        console.log('Response Data:', response.data);
-        setPaymentIntents(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching payment intents:', error);
-        toast.error('Failed to fetch payment intents.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const [length, setLength] = useState(0);
+const fetchPaymentIntents = () => {
+  const token = localStorage.getItem('token');
+  setLoading(true);
+  const apiUrl = `${process.env.REACT_APP_BASE_URL}/get-payment-intents`;
+  const config = {
+    headers: {
+      'Authorization': token // No need for string interpolation here
+    }
   };
+
+  const params = {};
+  if (selectedStartDate) params.startDate = selectedStartDate;
+  if (selectedEndDate) params.endDate = selectedEndDate;
+  if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
+  if (selectedpaymentData) params.paymentData = selectedpaymentData;
+
+  axios
+    .get(apiUrl, { params, ...config }) // Pass params as the second argument
+    .then((response) => {
+      console.log('Response Data:', response.data);
+      setPaymentIntents(response.data);
+      const len = response.data.length; 
+      setLength(len)// Assign the length of the data
+      console.log('Length of data:', len); // Log the length if needed
+    })
+    .catch((error) => {
+      console.error('Error fetching payment intents:', error);
+      toast.error('Failed to fetch payment intents.');
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
+
   
   const decodeSpaces = (str) => str.replace(/%20/g, ' ');
 
@@ -282,7 +286,7 @@ const PaymentIntentsTable = () => {
           </TableContainer>
           <TablePagination
       component="div"
-      count={100} // Total number of rows
+      count={length} // Total number of rows
       page={page}
       onPageChange={handleChangePage}
       rowsPerPage={rowsPerPage}
