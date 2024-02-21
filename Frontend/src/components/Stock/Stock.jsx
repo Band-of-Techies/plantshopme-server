@@ -47,8 +47,9 @@ const Stock = () => {
 
   const handleEditStockClick = (product) => {
     setSelectedProduct(product);
-    setNewStock(product.stock.toString()); // Set the current stock in the dialog input
     setEditStockDialogOpen(true);
+    setNewStock(product.stock.toString()); // Set the current stock in the dialog input
+    
   };
 
   const handleEditStockSubmit = async () => {

@@ -93,10 +93,29 @@ const PaymentIntentsTable = () => {
     setSelectedOrderStatus2(newStatus);
   };
 
+  // const handleUpdateStatus = (intentId) => {
+  //   axios
+  //     .put(`${process.env.REACT_APP_BASE_URL}/update-status/${intentId}`, { Orderstatus: selectedOrderStatus2 })
+  //     .then((response) => {
+  //       setPaymentIntents((prevIntents) =>
+  //         prevIntents.map((intent) =>
+  //           intent._id === intentId ? { ...intent, Orderstatus: selectedOrderStatus2 } : intent
+  //         )
+  //       );
+  //       setDialogOpen(false);
+  //       toast.success('Order status updated successfully!');
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error updating payment intent status:', error);
+  //       toast.error('Failed to update order status.');
+  //     });
+  // };
+
+
   const handleUpdateStatus = (intentId) => {
     axios
       .put(`${process.env.REACT_APP_BASE_URL}/update-status/${intentId}`, { Orderstatus: selectedOrderStatus2 })
-      .then((response) => {
+      .then(async (response) => {
         setPaymentIntents((prevIntents) =>
           prevIntents.map((intent) =>
             intent._id === intentId ? { ...intent, Orderstatus: selectedOrderStatus2 } : intent
@@ -104,12 +123,72 @@ const PaymentIntentsTable = () => {
         );
         setDialogOpen(false);
         toast.success('Order status updated successfully!');
+  
+        // Check if Orderstatus is Confirmed or Shipped
+        if (selectedOrderStatus2 === 'Order Confirmed') {
+          // If yes, send email
+          try {
+            setLoading(true);
+            const OrderId = response.data.orderId; // Assuming OrderId is returned in response
+            const to = response.data.user.email; // Assuming user object is returned in response
+            const name = response.data.user.name; // Assuming user object is returned in response
+            const userId = response.data.user.id;
+            await sendEmail(OrderId, to, name,userId);
+          } catch (error) {
+            console.error('Error sending email:', error);
+            // toast.error('Failed to send email');
+          } finally {
+            setLoading(false);
+          }
+        }
       })
       .catch((error) => {
         console.error('Error updating payment intent status:', error);
         toast.error('Failed to update order status.');
       });
   };
+  
+  // const sendEmail = async (OrderId, to, name) => {
+  //   try {
+  //     setLoading(true);
+  //     await axios.post('http://localhost:5000/api/send-email-with-attachment', { OrderId, to, name });
+  //     toast.success('Email sent successfully');
+  //   } catch (error) {
+  //     console.error('Error sending email:', error);
+  //     toast.error('Failed to send email User Email Not found');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const sendEmail = async (OrderId, to, name, userId) => {
+    try {
+      setLoading(true);
+      let additionalTo = ''; // Additional 'to' address from another endpoint
+  
+      // Check if user email is available in the response
+      if (!to) {
+        
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/customer/userEmail/${userId}`);
+        
+        additionalTo = response.data.email; // Additional 'to' address
+      }
+  
+      // Combine the 'to' addresses
+      const allTo = to ? [to, additionalTo] : additionalTo;
+  
+      // Send email with combined 'to' addresses
+      await axios.post(`${process.env.REACT_APP_BASE_URL}/send-email-with-attachment`, { OrderId, to: allTo, name });
+      toast.success('Email sent successfully');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast.error('Failed to send email. User email not found.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
   const [length, setLength] = useState(0);
 const fetchPaymentIntents = () => {
   const token = localStorage.getItem('token');

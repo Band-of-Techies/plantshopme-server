@@ -118,13 +118,17 @@ const RoleRouter=require('./routes/RoleManagement/role')
 
 // Database connection
 const phonemsgRouter=require('./routes/phoneMessage');
-
+const MailAttachRouter=require('./sendMailwithAttach')
+const invoiceRouter=require('./routes/Invoice/invoice')
 connection();
 
 // Middlewares
 app.use(express.json());
 app.use(cors());
+
+app.use("/api",MailAttachRouter);
 app.use("/auth", authRoute);
+app.use("/api",invoiceRouter);
 // Mount route handlers
 app.use("/api",phonemsgRouter)
 app.use("/api",RoleRouter)
@@ -162,6 +166,8 @@ app.use("/api",getCustomerDataRoute)
 app.use("/api",addnewproducts)
 // Serve static images
 app.use('/Image', express.static(path.join(__dirname, 'Image')));
+app.use('/InvoiceFolder', express.static(path.join(__dirname, 'InvoiceFolder')));
+
 app.use('/Icon', express.static(path.join(__dirname, 'Icon')));
 
 app.get('*', (req, res) => {

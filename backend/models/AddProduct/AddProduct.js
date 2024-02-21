@@ -41,6 +41,7 @@ const productSchema = new mongoose.Schema(
     subcategory: [String],
     stock: {
       type: Number,
+      default:0,
     },
     careType: {
       type: String,

@@ -101,6 +101,27 @@ router.get("/:id/verify/:token/", async (req, res) => {
   });
 
 
+
+  router.get('/userEmail/:id', async (req, res) => {
+    const userId = req.params.id;
+
+    try {
+        // Find the user by _id
+        const user = await User.findById(userId);
+
+        // If user not found, return 404
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Send the email in the response
+        res.json({ email: user.email });
+    } catch (error) {
+        console.error('Error retrieving user email:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Define a route for creating a payment intent
 
 // router.post('/create-payment-intent', async (req, res) => {
