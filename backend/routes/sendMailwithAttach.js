@@ -10,7 +10,8 @@ router.post('/send-email-with-attachment', async (req, res) => {
             host: process.env.HOST,
             service: process.env.SERVICE,
             port: Number(process.env.EMAIL_PORT),
-            secure: Boolean(process.env.SECURE),
+            ignoreTLS: false,
+            secure: false,
             auth: {
                 user: process.env.USER,
                 pass: process.env.PASS,
