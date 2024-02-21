@@ -22,13 +22,13 @@ router.post('/send-email-with-attachment', async (req, res) => {
 
         // Set up nodemailer transporter
         const transporter = nodemailer.createTransport({
-            host: process.env.HOST,
-            service: process.env.SERVICE,
-            port: Number(process.env.EMAIL_PORT),
+            host: 'smpt.gmail.com',
+            service: 'gmail',
+            port: 587,
             secure: Boolean(process.env.SECURE),
             auth: {
-                user: process.env.USER,
-                pass: process.env.PASS,
+                user: 'myplantstore11@gmail.com',
+                pass: 'bxcstfyfelooauxh',
             },
         });
 // Set email options
