@@ -622,7 +622,21 @@ router.get('/get-payment-intent-by-id/:orderId',authenticateToken, async (req, r
   }
 });
 
+router.get('/get-payment-intent/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
 
+    const paymentIntent = await paymentIntentSchema.findOne({ orderId });
+
+    if (!paymentIntent) {
+      return res.status(404).json({ error: 'Payment intent not found' });
+    }
+
+    res.status(200).json(paymentIntent);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // router.get('/get-payment-intent-by-id/:paymentIntentId', async (req, res) => {
 //   try {
@@ -811,6 +825,39 @@ router.put('/update-Refundstatus/:orderId', async (req, res) => {
   }
 });
 
+
+
+
+const PaymentIntent = require('../models/Payment/Payment');
+
+router.get('/ordersByProductId/:productId', async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    // Aggregate to find orders containing the specified productId
+    const orders = await PaymentIntent.aggregate([
+      // Unwind the updatedCartItems array
+      { $unwind: '$updatedCartItems' },
+      // Match documents containing the specified productId
+      { $match: { 'updatedCartItems.productId': productId } },
+      // Group by orderId to get unique orderIds
+      { $group: { _id: '$orderId' } }
+    ]);
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found for the specified productId' });
+    }
+
+    // Extract orderId from the aggregation result
+    const orderIds = orders.map(order => order._id);
+
+    // Return the list of orderIds
+    res.json({ orderIds });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
 
 
 

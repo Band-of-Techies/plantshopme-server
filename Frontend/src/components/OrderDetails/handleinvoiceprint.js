@@ -134,15 +134,19 @@ import footerinvoice from '../Image/footerinvoice.jpeg'
       // Draw a line for padding
       pdf.setDrawColor(144, 238, 144); // Light green color
 
+      const tableDataChunks = chunkArray(intent.updatedCartItems, 4); // Split the table data into chunks of 4 rows each
 
-      const tableData = intent.updatedCartItems.map((product, index) => {
+     let totalAmount = 0; // Initialize totalAmount variable outside the loop
+
+tableDataChunks.forEach((chunk, chunkIndex) => {
+    const tableData = chunk.map((product, index) => {
         const quantity = product.amount || 0;
         let title = '';
 
         if (product.flashSalePrice !== undefined) {
-          title = product.title + '(Flash Sale)' || '';
+            title = product.title + '(Flash Sale)' || '';
         } else {
-          title = product.title || '';
+            title = product.title || '';
         }
 
         const productPrice = product.flashSalePrice || product.dimension.Price || 0;
@@ -154,116 +158,108 @@ import footerinvoice from '../Image/footerinvoice.jpeg'
 
         // Calculate the total amount based on flash sale or regular price, including GiftWrap
         let total = product.flashSalePrice !== undefined
-          ? quantity * product.flashSalePrice
-          : quantity * productPrice;
+            ? quantity * product.flashSalePrice
+            : quantity * productPrice;
 
         // Add GiftWrap amount to the total (multiplied by quantity)
         const GiftWrap = product.GiftWrap ? 20 * quantity : 0;
         total += GiftWrap;
 
-        const GiftWrap1 = product.GiftWrap ? 20 : 0;
         return [
-          index + 1,    // SL No
-          title,        // Product Name
-          quantity,     // Quantity
-          dimensions,   // Dimensions
-          productPrice, // Product Price
-          GiftWrap1,    // GiftWrap Amount
-          total,        // Total
+            index + 1,    // SL No
+            title,        // Product Name
+            quantity,     // Quantity
+            dimensions,   // Dimensions
+            productPrice, // Product Price
+            GiftWrap,     // GiftWrap Amount
+            total,        // Total
         ];
-      });
+    });
 
-      // Assuming you want to calculate the grand total for all products
-      const grandTotal = tableData.reduce((total, row) => total + row[6], 0);
-
-      Gamount = grandTotal;
-
-      // Add a table using the autoTable plugin with added styling
-      pdf.autoTable({
+    // Calculate total amount for the current chunk
+    const chunkTotal = tableData.reduce((total, row) => total + row[6], 0);
+    
+    // Accumulate total amount for all chunks
+    totalAmount += chunkTotal;
+Gamount=totalAmount
+    // Add table to the PDF (remaining code remains the same)
+    pdf.autoTable({
         head: [['SL No', 'Product Name', 'Quantity', 'Dimensions', 'Product Price', 'GiftWrap', 'Total']],
         body: tableData,
         startY, // Add padding to the top
         styles: {
-          cellPadding: 5,
-          textColor: [0, 0, 0], // Text color (black)
-          lineColor: [0, 0, 0], // Line color (black)
-          fillColor: [220, 220, 220], // Fill color (light gray)
+            cellPadding: 5,
+            textColor: [0, 0, 0], // Text color (black)
+            lineColor: [0, 0, 0], // Line color (black)
+            fillColor: [220, 220, 220], // Fill color (light gray)
         },
-      });
+    });
 
-      // Calculate the height used by the table
-      const tableHeight = pdf.previousAutoTable.finalY - startY;
+    // Calculate the height used by the table
+    const tableHeight = pdf.previousAutoTable.finalY - startY;
 
-      // If the table doesn't fit on the page, add a new page
-      if (tableHeight > remainingHeight) {
-        // Check if there's enough space for a new page
-        if (pdf.internal.getNumberOfPages() > 0) {
-          // Add a new page before adding the image if it's not the first page
-          // pdf.addPage();
-          // Add the background image on the new page
-          // pdf.addImage(invoice, 'JPEG', 0, 0, pdf.internal.pageSize.width, pdf.internal.pageSize.height);
-        }
+    // If the table doesn't fit on the page, add a new page
+    if (tableHeight > remainingHeight && chunkIndex !== tableDataChunks.length - 1) {
+        pdf.addPage();
         startY = 40; // Reset startY for the new page
-      } else {
+    } else {
         startY += tableHeight; // Update startY for the remaining height
-      }
+    }
+});
 
-
-      // Draw a line for padding
-      pdf.setDrawColor(144, 238, 144); // Light green color
-      pdf.line(20, 203, pdf.internal.pageSize.width - 20, 203);
-
-      // Add a column for Subtotal, VAT, Total
-      pdf.text('Subtotal', pdf.internal.pageSize.width / 2, 213, { align: 'right' });
-      pdf.text('Shipping Fee', pdf.internal.pageSize.width / 2, 218, { align: 'right' });
-      pdf.text('Total', pdf.internal.pageSize.width / 2, 223, { align: 'right' });
-      pdf.text('After Discount', pdf.internal.pageSize.width / 2, 233, { align: 'right' });
-      pdf.text('Discount', pdf.internal.pageSize.width / 2, 227, { align: 'right' });
-      pdf.setTextColor(0, 0, 0); // Reset text color to black
-
-
-      const subtotal = 100;
-      const vatp = 5;// Replace with actual subtotal value
-      const vat = (Gamount * 5) / 100; // Replace with actual VAT value
-      const grandTotalF = Gamount + shippingfee; // Replace with actual total value
-      const finalt = Final + vat
-      pdf.text(`AED ${Gamount}`, pdf.internal.pageSize.width - 20, 213, { align: 'right' });
-      pdf.text(`${shippingfee}`, pdf.internal.pageSize.width - 20, 218, { align: 'right' });
-      pdf.text(`AED ${grandTotalF}`, pdf.internal.pageSize.width - 20, 223, { align: 'right' });
-      const discountText = discountperc !== 0
-        ? `${discountperc} %`
-        : discountflat !== 0
-          ? `AED ${discountflat}`
-          : 'AED 0';
-
-      pdf.text(discountText, pdf.internal.pageSize.width - 20, 227, { align: 'right' });
-      pdf.text(`AED ${Final}`, pdf.internal.pageSize.width - 20, 233, { align: 'right' });
-      // Display the total amount in words
-      pdf.setFont('times', 'bolditalic');
-      pdf.setFontSize(10);
-      pdf.setTextColor(0, 0, 139);
-      pdf.text('Amount in Words:', pdf.internal.pageSize.width / 2, 238, { align: 'right' });
-      pdf.text('AED ' + numberToWords(Final) + ' only', pdf.internal.pageSize.width - 20, 238, { align: 'right' });
-      // Draw a line for padding
-      pdf.setDrawColor(144, 238, 144); // Light green color
-      pdf.line(20, 240, pdf.internal.pageSize.width - 20, 240);
-      // Draw a line for padding
-      pdf.setDrawColor(144, 238, 144); // Light green color
+// Now you have the totalAmount variable containing the grand total for all products across all pages
 
     }
 
-    // Draw the bottom footer with Bank details
+    // Draw a line for padding
+    pdf.setDrawColor(144, 238, 144); // Light green color
+    pdf.line(20, 203, pdf.internal.pageSize.width - 20, 203);
+
+    // Add a column for Subtotal, VAT, Total
+    pdf.text('Subtotal', pdf.internal.pageSize.width / 2, 213, { align: 'right' });
+    pdf.text('Shipping Fee', pdf.internal.pageSize.width / 2, 218, { align: 'right' });
+    pdf.text('Total', pdf.internal.pageSize.width / 2, 223, { align: 'right' });
+    pdf.text('After Discount', pdf.internal.pageSize.width / 2, 233, { align: 'right' });
+    pdf.text('Discount', pdf.internal.pageSize.width / 2, 227, { align: 'right' });
+    pdf.setTextColor(0, 0, 0); // Reset text color to black
+
+    const subtotal = 100;
+    const vatp = 5;// Replace with actual subtotal value
+    const vat = (Gamount * 5) / 100; // Replace with actual VAT value
+    const grandTotalF = Gamount + shippingfee; // Replace with actual total value
+    const finalt = Final + vat
+    pdf.text(`AED ${Gamount}`, pdf.internal.pageSize.width - 20, 213, { align: 'right' });
+    pdf.text(`${shippingfee}`, pdf.internal.pageSize.width - 20, 218, { align: 'right' });
+    pdf.text(`AED ${grandTotalF}`, pdf.internal.pageSize.width - 20, 223, { align: 'right' });
+    const discountText = discountperc !== 0
+      ? `${discountperc} %`
+      : discountflat !== 0
+        ? `AED ${discountflat}`
+        : 'AED 0';
+
+    pdf.text(discountText, pdf.internal.pageSize.width - 20, 227, { align: 'right' });
+    pdf.text(`AED ${Final}`, pdf.internal.pageSize.width - 20, 233, { align: 'right' });
+    // Display the total amount in words
     pdf.setFont('times', 'bolditalic');
-    pdf.setFontSize(13);
-    pdf.setTextColor(144, 238, 144); // Light green color
-    pdf.text('Bank Details', 20, pdf.internal.pageSize.height - 50);
-    pdf.setFont('times', 'normal');
     pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 139); // Dark blue color
-    pdf.text('FAB Bank: Dubai branch', 20, pdf.internal.pageSize.height - 45);
-    pdf.text('A/C Name: myplantstore', 20, pdf.internal.pageSize.height - 40);
-    pdf.text('A/C No: 21454321641316415', 20, pdf.internal.pageSize.height - 35);
-    pdf.text('IBAN: 65296584103216', 20, pdf.internal.pageSize.height - 30);
+    pdf.setTextColor(0, 0, 139);
+    pdf.text('Amount in Words:', pdf.internal.pageSize.width / 2, 238, { align: 'right' });
+    pdf.text('AED ' + numberToWords(Final) + ' only', pdf.internal.pageSize.width - 20, 243, { align: 'right' });
+    // Draw a line for padding
+    pdf.setDrawColor(144, 238, 144); // Light green color
+    pdf.line(20, 247, pdf.internal.pageSize.width - 20, 247);
+    // Draw a line for padding
+    pdf.setDrawColor(144, 238, 144); // Light green color
+
+    // // Payment details
+    // pdf.text('Payment Details', pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 50, { align: 'right' });
+    // pdf.setFont('times', 'normal');
+    // pdf.setFontSize(10);
+    // pdf.setTextColor(0, 0, 139); // Dark blue color
+    // pdf.text('Payment Method: Credit Card', pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 45, { align: 'right' });
+    // pdf.text('Total Amount Paid: 1000 AED', pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 40, { align: 'right' });
+    // pdf.text('Payment Date: 2024-02-22', pdf.internal.pageSize.width / 2, pdf.internal.pageSize.height - 35, { align: 'right' });
+
     const footerWidth = pdf.internal.pageSize.width - 15; // Adjust the width of the footer image as needed
     const footerHeight = 20; // Adjust the height of the footer image as needed
     const footerX = (pdf.internal.pageSize.width - footerWidth) / 2; // Center the image horizontally
@@ -280,7 +276,15 @@ import footerinvoice from '../Image/footerinvoice.jpeg'
 
     // Call the async function to upload the PDF
     handleUploadPDF(formData);
+};
 
-
-  };
+// Function to split array into chunks
+const chunkArray = (array, size) => {
+  const chunkedArr = [];
+  for (let i = 0; i < array.length; i += size) {
+    const chunk = array.slice(i, i + size);
+    chunkedArr.push(chunk);
+  }
+  return chunkedArr;
+};
   export { handlePrint };
