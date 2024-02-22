@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 import PrintPage from './Invoice';
 import TablePagination from '@mui/material/TablePagination';
-
+import { handlePrint } from './handleinvoiceprint';
 import {
   Table,
   Skeleton,
@@ -133,7 +133,12 @@ const PaymentIntentsTable = () => {
             const to = response.data.user.email; // Assuming user object is returned in response
             const name = response.data.user.name; // Assuming user object is returned in response
             const userId = response.data.user.id;
-            await sendEmail(OrderId, to, name,userId);
+        
+            // Print the PDF first
+            handlePrint(response.data);
+        
+            // Then, send email
+            await sendEmail(OrderId, to, name, userId);
           } catch (error) {
             console.error('Error sending email:', error);
             // toast.error('Failed to send email');
@@ -141,6 +146,7 @@ const PaymentIntentsTable = () => {
             setLoading(false);
           }
         }
+        
       })
       .catch((error) => {
         console.error('Error updating payment intent status:', error);
@@ -315,6 +321,7 @@ const fetchPaymentIntents = () => {
                   <TableCell>Status</TableCell>
                   <TableCell>Change Status</TableCell>
                   <TableCell>Update</TableCell>
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -358,6 +365,7 @@ const fetchPaymentIntents = () => {
                         Update
                       </Button>
                     </TableCell>
+                   
                   </TableRow>
                 ))}
               </TableBody>

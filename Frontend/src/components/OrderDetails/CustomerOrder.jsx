@@ -210,7 +210,7 @@ let Clientlocation=''
                                         {/* <p>After Discount:{(isNaN(data?.couponData?.value / 10) ? finalAmount : data.total)}</p> */}
                                         <StyledPrintPageContainer>
                                             <PrintPage intent={selectedIntent} />
-                                            <SendEmailButton intent={selectedIntent}/>
+                                           
                                         </StyledPrintPageContainer>
                                     </OrderDetails>
                                 </ItemsWrapper>
