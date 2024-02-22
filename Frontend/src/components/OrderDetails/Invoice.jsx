@@ -149,13 +149,22 @@ tableDataChunks.forEach((chunk, chunkIndex) => {
             title = product.title || '';
         }
 
-        const productPrice = product.flashSalePrice || product.dimension.Price || 0;
+        // const productPrice = product.flashSalePrice || product.dimension.Price || 0;
+
+        let productPrice = 0;
+        if (product.flashSalePrice !== undefined) {
+          productPrice = product.flashSalePrice
+      } else {
+        productPrice = product.dimension.Price
+      }
 
         const Value1 = product.dimension?.Value1 || '';
         const Value2 = product.dimension?.Value2 || '';
 
         const dimensions = `${Value1},${Value2}`;
 
+
+        
         // Calculate the total amount based on flash sale or regular price, including GiftWrap
         let total = product.flashSalePrice !== undefined
             ? quantity * product.flashSalePrice
