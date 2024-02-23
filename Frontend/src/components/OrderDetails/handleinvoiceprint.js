@@ -136,85 +136,87 @@ import footerinvoice from '../Image/footerinvoice.jpeg'
 
       const tableDataChunks = chunkArray(intent.updatedCartItems, 4); // Split the table data into chunks of 4 rows each
 
-     let totalAmount = 0; // Initialize totalAmount variable outside the loop
-
-tableDataChunks.forEach((chunk, chunkIndex) => {
-    const tableData = chunk.map((product, index) => {
-        const quantity = product.amount || 0;
-        let title = '';
-
-        if (product.flashSalePrice !== undefined) {
-            title = product.title + '(Flash Sale)' || '';
+     let totalAmount = 0; 
+     // Initialize totalAmount variable outside the loop
+     tableDataChunks.forEach((chunk, chunkIndex) => {
+      const tableData = chunk.map((product, index) => {
+          // Calculate continuous index based on chunk number and index within chunk
+          const continuousIndex = chunkIndex * 4 + index + 1;
+  
+          const quantity = product.amount || 0;
+          let title = '';
+  
+          if (product.flashSalePrice !== undefined) {
+              title = product.title + '(Flash Sale)' || '';
+          } else {
+              title = product.title || '';
+          }
+  
+          // const productPrice = product.flashSalePrice || product.dimension.Price || 0;
+  
+          let productPrice = 0;
+          if (product.flashSalePrice !== undefined) {
+            productPrice = product.flashSalePrice
         } else {
-            title = product.title || '';
+          productPrice = product.dimension.Price
         }
-
-        // const productPrice = product.flashSalePrice || product.dimension.Price || 0;
-
-        let productPrice = 0;
-        if (product.flashSalePrice !== undefined) {
-          productPrice = product.flashSalePrice
+  
+          const Value1 = product.dimension?.Value1 || '';
+          const Value2 = product.dimension?.Value2 || '';
+  
+          const dimensions = `${Value1},${Value2}`;
+  
+          // Calculate the total amount based on flash sale or regular price, including GiftWrap
+          let total = product.flashSalePrice !== undefined
+              ? quantity * product.flashSalePrice
+              : quantity * productPrice;
+  
+          // Add GiftWrap amount to the total (multiplied by quantity)
+          const GiftWrap = product.GiftWrap ? 20 * quantity : 0;
+          total += GiftWrap;
+  
+          return [
+              continuousIndex,    // SL No
+              title,        // Product Name
+              quantity,     // Quantity
+              dimensions,   // Dimensions
+              productPrice, // Product Price
+              GiftWrap,     // GiftWrap Amount
+              total,        // Total
+          ];
+      });
+  
+      // Calculate total amount for the current chunk
+      const chunkTotal = tableData.reduce((total, row) => total + row[6], 0);
+      
+      // Accumulate total amount for all chunks
+      totalAmount += chunkTotal;
+  Gamount=totalAmount
+      // Add table to the PDF (remaining code remains the same)
+      pdf.autoTable({
+          head: [['SL No', 'Product Name', 'Quantity', 'Dimensions', 'Product Price', 'GiftWrap', 'Total']],
+          body: tableData,
+          startY, // Add padding to the top
+          styles: {
+              cellPadding: 5,
+              textColor: [0, 0, 0], // Text color (black)
+              lineColor: [0, 0, 0], // Line color (black)
+              fillColor: [220, 220, 220], // Fill color (light gray)
+          },
+      });
+  
+      // Calculate the height used by the table
+      const tableHeight = pdf.previousAutoTable.finalY - startY;
+  
+      // If the table doesn't fit on the page, add a new page
+      if (tableHeight > remainingHeight && chunkIndex !== tableDataChunks.length - 1) {
+          pdf.addPage();
+          startY = 40; // Reset startY for the new page
       } else {
-        productPrice = product.dimension.Price
+          startY += tableHeight; // Update startY for the remaining height
       }
-
-        const Value1 = product.dimension?.Value1 || '';
-        const Value2 = product.dimension?.Value2 || '';
-
-        const dimensions = `${Value1},${Value2}`;
-
-
-        
-        // Calculate the total amount based on flash sale or regular price, including GiftWrap
-        let total = product.flashSalePrice !== undefined
-            ? quantity * product.flashSalePrice
-            : quantity * productPrice;
-
-        // Add GiftWrap amount to the total (multiplied by quantity)
-        const GiftWrap = product.GiftWrap ? 20 * quantity : 0;
-        total += GiftWrap;
-
-        return [
-            index + 1,    // SL No
-            title,        // Product Name
-            quantity,     // Quantity
-            dimensions,   // Dimensions
-            productPrice, // Product Price
-            GiftWrap,     // GiftWrap Amount
-            total,        // Total
-        ];
-    });
-
-    // Calculate total amount for the current chunk
-    const chunkTotal = tableData.reduce((total, row) => total + row[6], 0);
-    
-    // Accumulate total amount for all chunks
-    totalAmount += chunkTotal;
-Gamount=totalAmount
-    // Add table to the PDF (remaining code remains the same)
-    pdf.autoTable({
-        head: [['SL No', 'Product Name', 'Quantity', 'Dimensions', 'Product Price', 'GiftWrap', 'Total']],
-        body: tableData,
-        startY, // Add padding to the top
-        styles: {
-            cellPadding: 5,
-            textColor: [0, 0, 0], // Text color (black)
-            lineColor: [0, 0, 0], // Line color (black)
-            fillColor: [220, 220, 220], // Fill color (light gray)
-        },
-    });
-
-    // Calculate the height used by the table
-    const tableHeight = pdf.previousAutoTable.finalY - startY;
-
-    // If the table doesn't fit on the page, add a new page
-    if (tableHeight > remainingHeight && chunkIndex !== tableDataChunks.length - 1) {
-        pdf.addPage();
-        startY = 40; // Reset startY for the new page
-    } else {
-        startY += tableHeight; // Update startY for the remaining height
-    }
-});
+  });
+  
 
 // Now you have the totalAmount variable containing the grand total for all products across all pages
 

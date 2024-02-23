@@ -828,24 +828,76 @@ router.put('/update-Refundstatus/:orderId', async (req, res) => {
 
 
 
+// const PaymentIntent = require('../models/Payment/Payment');
+
+// router.get('/ordersByProductId/:productId', async (req, res) => {
+//   try {
+//     const { productId } = req.params;
+
+//     // Aggregate to find orders containing the specified productId
+//     const orders = await PaymentIntent.aggregate([
+//       // Unwind the updatedCartItems array
+//       { $unwind: '$updatedCartItems' },
+//       // Match documents containing the specified productId
+//       { $match: { 'updatedCartItems.productId': productId } },
+//       // Group by orderId to get unique orderIds
+//       { $group: { _id: '$orderId' } }
+//     ]);
+
+//     if (!orders || orders.length === 0) {
+//       return res.status(404).json({ message: 'No orders found for the specified productId' });
+//     }
+
+//     // Extract orderId from the aggregation result
+//     const orderIds = orders.map(order => order._id);
+
+//     // Return the list of orderIds
+//     res.json({ orderIds });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server Error' });
+//   }
+// });
+
 const PaymentIntent = require('../models/Payment/Payment');
 
 router.get('/ordersByProductId/:productId', async (req, res) => {
   try {
     const { productId } = req.params;
+    const { startDate, endDate } = req.query; // Get startDate and endDate from query parameters
 
-    // Aggregate to find orders containing the specified productId
+    // Initialize the match object with the productId
+    let match = { 'updatedCartItems.productId': productId };
+
+    // If startDate and endDate are provided, add date filtering to the match object
+    if (startDate && endDate) {
+      // Convert startDate and endDate strings to Date objects
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Ensure both startDate and endDate are valid dates
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format' });
+      }
+
+      // Add date range filtering to the match object
+      match.createdAt = { $gte: start, $lte: end };
+    }
+
+    // Aggregate to find orders containing the specified productId and within the date range (if provided)
     const orders = await PaymentIntent.aggregate([
+      // Match documents containing the specified productId and createdAt within the date range (if provided)
+      { $match: match },
       // Unwind the updatedCartItems array
       { $unwind: '$updatedCartItems' },
-      // Match documents containing the specified productId
+      // Match documents containing the specified productId again (in case there are multiple products in an order)
       { $match: { 'updatedCartItems.productId': productId } },
       // Group by orderId to get unique orderIds
       { $group: { _id: '$orderId' } }
     ]);
 
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: 'No orders found for the specified productId' });
+      return res.status(404).json({ message: 'No orders found for the specified productId and date range' });
     }
 
     // Extract orderId from the aggregation result
