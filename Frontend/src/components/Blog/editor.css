@@ -1,0 +1,21 @@
+.quill{
+    font-family: inherit;
+    padding:0;
+    border: 1px solid var(--grey-100);
+    border-radius: 5px;
+    color: var(--grey-500);
+    font-size:16px;
+    width:100%;
+ }
+ .ql-snow{
+    font-family: inherit;
+    border:none;
+ }
+ .ql-toolbar{
+    font-family: inherit;
+    border-bottom: 1px solid var(--grey-100);
+ }
+ .ql-container{
+    font-family: inherit;
+    min-height:100px;
+ }
