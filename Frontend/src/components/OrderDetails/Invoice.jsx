@@ -275,7 +275,7 @@ const PrintPage = ({ intent }) => {
     const footerHeight = 20; // Adjust the height of the footer image as needed
     const footerX = (pdf.internal.pageSize.width - footerWidth) / 2; // Center the image horizontally
     const footerY = pdf.internal.pageSize.height - 30 + 5; // Place the image just below the IBAN text with some padding
-    pdf.addImage(footerinvoice, 'JPEG', footerX, footerY, footerWidth, footerHeight);
+    // pdf.addImage(footerinvoice, 'JPEG', footerX, footerY, footerWidth, footerHeight);
     // Save or open the PDF
     const pdfName = `invoice_${last4Digits}.pdf`; // e.g., invoice_1234.pdf
     pdf.save(pdfName);
