@@ -54,8 +54,10 @@ const previousRoute = ()=>{
         <Navbar />
         <MainSection>
          <Wrapper ref={myRef}>
-        {/* <div className='inline'><Link to={`/blogs/edit_post/${blog._id}`} className='btn'>Edit</Link> */}
-        {/* <button type="button" onClick={previousRoute} className='cancel-btn'>Back</button></div> */}
+        {/* <div className='inline'>
+        <Link to={`/blogs/edit_post/${blog._id}`} className='btn'>Edit</Link> */}
+        <div className='inline'>
+        <button type="button" onClick={previousRoute} className='cancel-btn'>Back</button></div>
         <div className='image'>
         <img src={blog.photo?.url} alt="blog" className='blog-img'/>
         </div>
@@ -72,6 +74,7 @@ const previousRoute = ()=>{
           <div className='summary'>{blog.summary}</div>
           <div className='content'>{removeHtmlTags(blog.content)}</div>
         </div>
+        <Link to={`/blogs`} className='btn'>Back</Link>
         <Link to={`/blogs/edit-post/${blog._id}`} className='btn'>Edit</Link>
       </Wrapper>
       </MainSection>
