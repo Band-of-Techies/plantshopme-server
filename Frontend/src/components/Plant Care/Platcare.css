@@ -1,0 +1,31 @@
+/* AddCategory.css */
+.main-container {
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 800px;
+    
+  }
+  
+  /* Styles for different screen sizes */
+  @media (max-width: 600px) {
+    .main-container {
+      padding-left: 60px;
+      padding-right: 10px;
+    }
+  }
+  
+  @media (min-width: 601px) and (max-width: 960px) {
+    .main-container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+  .green-step-label {
+    color: green !important;
+  }
+
+  
+
+  
