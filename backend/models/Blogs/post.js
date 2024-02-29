@@ -23,12 +23,12 @@ const PostSchema = new Schema({
     },
     photo: PhotoSchema,
     author: {
-      type: Schema.Types.ObjectId,
+      type: String,
     },
     tags: {
       type: [String],
       default: [],
-      required:true 
+      
   },
 },{
 
