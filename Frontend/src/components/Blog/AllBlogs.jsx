@@ -47,8 +47,9 @@ const AllBlogs = () => {
                 const { _id, title, summary, cover, content, createdAt, author, photo, tags } = blog;
                 return (
                   <div className="post" key={idx}>
-                    <img src={photo.url} alt="blog" />
+                    <img src={photo.url} style={{maxWidth:'400px',maxHeight:'500px',objectFit:'cover',width:'400px',height:'500px'}} alt="blog" />
                     {/* Button to navigate to edit post */}
+
                     <button onClick={() => handleEditPost(_id)}>Edit Post</button>
                   </div>
                 );
