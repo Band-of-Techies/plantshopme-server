@@ -1,25 +1,21 @@
-import React, { useState } from 'react'
-import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import moment from 'moment';
-import { useRef } from 'react';
+import axios from 'axios';
 import Sidebar from '../sidebar/Sidebar';
 import Navbar from '../navbar/Navbar';
-import axios from 'axios';
-import {formatISO9075} from "date-fns"
-
 
 const AllBlogs = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [blog, setBlog] = useState([]); // Ensure blog is initialized as an array
+  const [blogs, setBlogs] = useState([]);
 
   // Function to fetch all blogs
   const getAllBlogs = async () => {
     try {
       const resp = await axios.get(`${process.env.REACT_APP_BASE_URL}/post`);
-      setBlog(resp.data);
+      setBlogs(resp.data);
     } catch (error) {
       console.error('Error fetching blogs:', error);
     }
@@ -29,56 +25,47 @@ const AllBlogs = () => {
     getAllBlogs();
   }, []);
 
-  const handleButton = (prop) => {
-    navigate(`/blogs/edit-post/${prop._id}`);
-  };
-
-  // Helper function to format date and time
-  const formatDateTime = (dateTime) => {
-    return moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-  };
-
-  // Helper function to remove HTML tags from summary
-  const removeHtmlTags = (htmlString) => {
-    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-    return doc.body.textContent || '';
+  // Handle navigation to edit post
+  const handleEditPost = (postId) => {
+    navigate(`/blogs/edit-post/${postId}`);
   };
 
   return (
-    
-      <div className='single'>
-        <Sidebar />
-        <div class='singleContainer'>
-          <Navbar />
-        {/* Sidebar and Navbar components */}
-        <MainWrapper>
-          <Wrapper>
-            <div className='header-div'>
-              <h4>Recent Posts</h4>
-            </div>
-            <div className='post-container'>
-              {/* Check if blog is an array before mapping over it */}
-              {Array.isArray(blog) && blog.length > 0 ? (
-                blog.map((blogs, idx) => {
-                  const { _id, title, summary, cover, content, createdAt, author, photo, tags } = blogs;
-                  return (
-                    <><div className="post" key={idx}>
-                      <img src={blogs.photo.url} onClick={handleButton(blogs)} alt="bolg"></img>
-                    </div></>
-                  );
-                })
-              ) : (
-                <div>No blogs available.</div>
-              )}
-            </div>
-          </Wrapper>
-        </MainWrapper>
-      </div>
+    <div className='single'>
+     <Sidebar />
+<div class='singleContainer'>
+  <Navbar />
+      <MainWrapper>
+        <Wrapper>
+          <div className='header-div'>
+            <h4>Recent Posts</h4>
+          </div>
+          <div className='post-container'>
+            {/* Check if blogs is an array before mapping over it */}
+            {Array.isArray(blogs) && blogs.length > 0 ? (
+              blogs.map((blog, idx) => {
+                const { _id, title, summary, cover, content, createdAt, author, photo, tags } = blog;
+                return (
+                  <div className="post" key={idx}>
+                    <img src={photo.url} alt="blog" />
+                    {/* Button to navigate to edit post */}
+                    <button onClick={() => handleEditPost(_id)}>Edit Post</button>
+                  </div>
+                );
+              })
+            ) : (
+              <div>No blogs available.</div>
+            )}
+          </div>
+        </Wrapper>
+      </MainWrapper>
+    </div>
     </div>
   );
-}
+};
 
 export default AllBlogs;
+
 
 const MainWrapper = styled.div`
 width:100%;

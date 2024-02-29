@@ -73,8 +73,8 @@ const EditBlog = () => {
       console.log('run');
       event.preventDefault();
       try {
-        const resp = await axios.delete(`${process.env.REACT_APP_BASE_URL}/api/post/${id}`);
-        navigate('/')
+        const resp = await axios.delete(`${process.env.REACT_APP_BASE_URL}/post/${id}`);
+        navigate('/blogs')
         return resp.data;
       } catch (error) {
         console.error(error);
