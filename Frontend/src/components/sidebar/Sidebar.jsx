@@ -8,7 +8,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { IoIosPhotos } from "react-icons/io";
 import { MdEditDocument } from "react-icons/md";
 import { FaBloggerB } from "react-icons/fa";
-
+import axios from 'axios';
 import {
   Dashboard as DashboardIcon,
   Category as CategoryIcon,
@@ -58,6 +58,7 @@ const Sidebar = () => {
   useEffect(() => {
     // Fetch user details when the component mounts
     fetchUserDetails();
+    fetchPaymentIntents();
   }, []);
 
   const handleLogout = () => {
@@ -67,6 +68,59 @@ const Sidebar = () => {
 
   const LocalUserType = localStorage.getItem("UserType");
   console.log("LocalUserType:", LocalUserType);
+
+
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  useEffect(() => {
+    // Fetch notifications with status not equal to 'not'
+    axios.get(`${process.env.REACT_APP_BASE_URL}/Notification`)
+      .then(response => {
+        setNotifications(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching notifications:', error);
+      });
+  }, []);
+
+  const fetchPaymentIntents = () => {
+    const token = localStorage.getItem('token');
+    
+    const apiUrl = `${process.env.REACT_APP_BASE_URL}/get-payment-intents`;
+    const config = {
+      headers: {
+        'Authorization': token
+      }
+    };
+  
+    axios
+      .get(apiUrl, config) // Removed the params argument
+      .then((response) => {
+        console.log('Response Data:', response.data);
+        const orderIds = response.data.map(order => order.orderId); // Extract order IDs
+        
+        // Post each order ID to the Notification endpoint
+        orderIds.forEach(orderId => {
+          axios.post(`${process.env.REACT_APP_BASE_URL}/Notification`, { orderId, status: 'not' })
+            .then((response) => {
+              console.log('Order inserted:', response.data);
+            })
+            .catch((error) => {
+              console.error('Error inserting order:', error);
+            });
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching payment intents:', error);
+        
+      })
+      .finally(() => {
+      
+      });
+  };
+  
+
 
 
   return (
@@ -263,6 +317,11 @@ const Sidebar = () => {
             <li>
               <OrderDetailsIcon className="icon" />
               <span>Order Details</span>
+{notifications.length > 0 && (
+  <span className="notification-badge">{notifications.length}</span>
+)}
+
+
             </li>
           </Link>
             </React.Fragment>
