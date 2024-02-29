@@ -28,6 +28,7 @@ import {
 import Sidebar from '../sidebar/Sidebar';
 import Navbar from '../navbar/Navbar';
 import styled from 'styled-components';
+import NotificationComponent from './Notification';
 
 const PaymentIntentsTable = () => {
   const [page, setPage] = useState(0);
@@ -123,7 +124,7 @@ const PaymentIntentsTable = () => {
         );
         setDialogOpen(false);
         toast.success('Order status updated successfully!');
-  
+
         // Check if Orderstatus is Confirmed or Shipped
         if (selectedOrderStatus2 === 'Order Confirmed') {
           // If yes, send email
@@ -133,10 +134,10 @@ const PaymentIntentsTable = () => {
             const to = response.data.user.email; // Assuming user object is returned in response
             const name = response.data.user.name; // Assuming user object is returned in response
             const userId = response.data.user.id;
-        
+
             // Print the PDF first
             handlePrint(response.data);
-        
+
             // Then, send email
             await sendEmail(OrderId, to, name, userId);
           } catch (error) {
@@ -146,14 +147,14 @@ const PaymentIntentsTable = () => {
             setLoading(false);
           }
         }
-        
+
       })
       .catch((error) => {
         console.error('Error updating payment intent status:', error);
         toast.error('Failed to update order status.');
       });
   };
-  
+
   // const sendEmail = async (OrderId, to, name) => {
   //   try {
   //     setLoading(true);
@@ -171,18 +172,18 @@ const PaymentIntentsTable = () => {
     try {
       setLoading(true);
       let additionalTo = ''; // Additional 'to' address from another endpoint
-  
+
       // Check if user email is available in the response
       if (!to) {
-        
+
         const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/customer/userEmail/${userId}`);
-        
+
         additionalTo = response.data.email; // Additional 'to' address
       }
-  
+
       // Combine the 'to' addresses
       const allTo = to ? [to, additionalTo] : additionalTo;
-  
+
       // Send email with combined 'to' addresses
       await axios.post(`${process.env.REACT_APP_BASE_URL}/send-email-with-attachment`, { OrderId, to: allTo, name });
       toast.success('Email sent successfully');
@@ -193,44 +194,57 @@ const PaymentIntentsTable = () => {
       setLoading(false);
     }
   };
-  
-  
+
+
   const [length, setLength] = useState(0);
-const fetchPaymentIntents = () => {
-  const token = localStorage.getItem('token');
-  setLoading(true);
-  const apiUrl = `${process.env.REACT_APP_BASE_URL}/get-payment-intents`;
-  const config = {
-    headers: {
-      'Authorization': token // No need for string interpolation here
-    }
-  };
-
-  const params = {};
-  if (selectedStartDate) params.startDate = selectedStartDate;
-  if (selectedEndDate) params.endDate = selectedEndDate;
-  if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
-  if (selectedpaymentData) params.paymentData = selectedpaymentData;
-
-  axios
-    .get(apiUrl, { params, ...config }) // Pass params as the second argument
-    .then((response) => {
-      console.log('Response Data:', response.data);
-      setPaymentIntents(response.data);
-      const len = response.data.length; 
-      setLength(len)// Assign the length of the data
-      console.log('Length of data:', len); // Log the length if needed
-    })
-    .catch((error) => {
-      console.error('Error fetching payment intents:', error);
-      toast.error('Failed to fetch payment intents.');
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-};
-
+  const fetchPaymentIntents = () => {
+    const token = localStorage.getItem('token');
+    setLoading(true);
+    const apiUrl = `${process.env.REACT_APP_BASE_URL}/get-payment-intents`;
+    const config = {
+      headers: {
+        'Authorization': token // No need for string interpolation here
+      }
+    };
   
+    const params = {};
+    if (selectedStartDate) params.startDate = selectedStartDate;
+    if (selectedEndDate) params.endDate = selectedEndDate;
+    if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
+    if (selectedpaymentData) params.paymentData = selectedpaymentData;
+  
+    axios
+      .get(apiUrl, { params, ...config }) // Pass params as the second argument
+      .then((response) => {
+        console.log('Response Data:', response.data);
+        setPaymentIntents(response.data);
+        const len = response.data.length;
+        setLength(len); // Assign the length of the data
+        console.log('Length of data:', len); // Log the length if needed
+        
+        // Insert orders into the database
+        response.data.forEach((order) => {
+         
+            axios.post(`${process.env.REACT_APP_BASE_URL}/Notification`, { orderId: order.orderId, status: 'not' })
+              .then((response) => {
+                console.log('Order inserted:', response.data);
+              })
+              .catch((error) => {
+                console.error('Error inserting order:', error);
+              });
+          
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching payment intents:', error);
+        toast.error('Failed to fetch payment intents.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+  
+
   const decodeSpaces = (str) => str.replace(/%20/g, ' ');
 
 
@@ -245,6 +259,8 @@ const fetchPaymentIntents = () => {
         <Navbar />
         <MainWrapper>
           <Wrapper>
+
+        <NotificationComponent/>
             <h3>Order Details</h3>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ flex: 1, marginBottom: '20px', justifyContent: 'space-between', }}>
@@ -306,82 +322,82 @@ const fetchPaymentIntents = () => {
             </div>
 
             <div style={{ paddingTop: '10px' }}>
-      {loading ? (
-        <Skeleton height={50} count={5} />
-      ) : (
-        <>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>SL No</TableCell>
-                  <TableCell>Order ID</TableCell>
-                  <TableCell>Payment Details</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Change Status</TableCell>
-                  <TableCell>Update</TableCell>
-                  
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {(rowsPerPage > 0
-                  ? paymentIntents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  : paymentIntents
-                ).map((intent, index) => (
-                  <TableRow key={intent._id}>
-                    <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
-                    <TableCell>
-                      <Link to={`/ordercustomerdetails/${intent.orderId}`}>
-                        <Button variant="outlined" color="primary" style={{ textTransform: 'none', color: 'blue' }}>
-                          {intent.orderId}
-                        </Button>
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      {(isNaN((intent?.paymentData?.amount / 100).toFixed(2)) ? (' COD') : (intent?.paymentData?.amount / 100).toFixed(2) + ' AED')}
-                    </TableCell>
-                    <TableCell>{new Date(intent?.createdAt).toLocaleString()}</TableCell>
-                    <TableCell>{intent?.Orderstatus}</TableCell>
-                    <TableCell>
-                      <FormControl fullWidth>
-                        <Select
-                          value={intent?.Orderstatus}
-                          onChange={(e) => handleStatusChange(intent._id, e.target.value)}
-                        >
-                          <MenuItem value="Order Placed">Order Placed</MenuItem>
-                          <MenuItem value="Order Confirmed">Order Confirmed</MenuItem>
-                          <MenuItem value="Shipping">Shipping</MenuItem>
-                          <MenuItem value="Delivered">Delivered</MenuItem>
-                          <MenuItem value="Refund">Refund</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleUpdateStatus(intent._id)}
-                      >
-                        Update
-                      </Button>
-                    </TableCell>
-                   
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-      component="div"
-      count={length} // Total number of rows
-      page={page}
-      onPageChange={handleChangePage}
-      rowsPerPage={rowsPerPage}
-      onRowsPerPageChange={handleChangeRowsPerPage}
-    />
-</>
-)}
-</div>
+              {loading ? (
+                <Skeleton height={50} count={5} />
+              ) : (
+                <>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>SL No</TableCell>
+                          <TableCell>Order ID</TableCell>
+                          <TableCell>Payment Details</TableCell>
+                          <TableCell>Date</TableCell>
+                          <TableCell>Status</TableCell>
+                          <TableCell>Change Status</TableCell>
+                          <TableCell>Update</TableCell>
+
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {(rowsPerPage > 0
+                          ? paymentIntents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          : paymentIntents
+                        ).map((intent, index) => (
+                          <TableRow key={intent._id} className={intent.Orderstatus === 'Order Placed' ? 'highlighted-row' : ''}>
+                            <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                            <TableCell>
+                              <Link to={`/ordercustomerdetails/${intent.orderId}`}>
+                                <Button variant="outlined" color="primary" style={{ textTransform: 'none', color: 'blue' }}>
+                                  {intent.orderId}
+                                </Button>
+                              </Link>
+                            </TableCell>
+                            <TableCell>
+                              {(isNaN((intent?.paymentData?.amount / 100).toFixed(2)) ? (' COD') : (intent?.paymentData?.amount / 100).toFixed(2) + ' AED')}
+                            </TableCell>
+                            <TableCell>{new Date(intent?.createdAt).toLocaleString()}</TableCell>
+                            <TableCell>{intent?.Orderstatus}</TableCell>
+                            <TableCell>
+                              <FormControl fullWidth>
+                                <Select
+                                  value={intent?.Orderstatus}
+                                  onChange={(e) => handleStatusChange(intent._id, e.target.value)}
+                                >
+                                  <MenuItem value="Order Placed">Order Placed</MenuItem>
+                                  <MenuItem value="Order Confirmed">Order Confirmed</MenuItem>
+                                  <MenuItem value="Shipping">Shipping</MenuItem>
+                                  <MenuItem value="Delivered">Delivered</MenuItem>
+                                  <MenuItem value="Refund">Refund</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="outlined"
+                                onClick={() => handleUpdateStatus(intent._id)}
+                              >
+                                Update
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    component="div"
+                    count={length} // Total number of rows
+                    page={page}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </>
+              )}
+            </div>
 
             {selectedIntent && (
               <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} style={{ width: '1200px' }}>
@@ -444,4 +460,8 @@ const Wrapper = styled.section`
   h3 {
     margin-top: 0.5rem;
   }
+  .highlighted-row {
+    background-color: #cacbcd; /* Adjust the background color as per your preference */
+  }
+  
 `;

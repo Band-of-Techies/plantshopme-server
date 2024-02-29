@@ -120,6 +120,7 @@ const RoleRouter=require('./routes/RoleManagement/role')
 const phonemsgRouter=require('./routes/phoneMessage');
 const MailAttachRouter=require('./sendMailwithAttach')
 const invoiceRouter=require('./routes/Invoice/invoice')
+const notification=require('./routes/Notification/Notification')
 connection();
 
 // Middlewares
@@ -161,7 +162,7 @@ app.use("/api",dimensionRoute);
 app.use("/api",coinsRouter)
 app.use("/api",dashboardrouter)
 app.use("/api",getCustomerDataRoute)
-
+app.use("/api",notification);
 
 app.use("/api",addnewproducts)
 // Serve static images
