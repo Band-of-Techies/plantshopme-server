@@ -565,13 +565,10 @@ router.post('/create-cod-intent', async (req, res) => {
   }
 });
 
-
-
-// Backend route for getting payment intents
-router.get('/get-payment-intents',authenticateToken, async (req, res) => {
+router.get('/get-payment-intents', authenticateToken, async (req, res) => {
   try {
     let paymentIntents;
-    const { startDate, endDate, Orderstatus,paymentData } = req.query;
+    const { startDate, endDate, Orderstatus, paymentData } = req.query;
 
     let filter = {};
 
@@ -588,23 +585,123 @@ router.get('/get-payment-intents',authenticateToken, async (req, res) => {
       const orderStatusRegex = new RegExp(Orderstatus, 'i');
       filter.Orderstatus = { $regex: orderStatusRegex };
     }
-    
 
-    if(paymentData){
+    if (paymentData) {
       const paymentDataRegex = new RegExp(paymentData, 'i');
       filter.paymentData = { $regex: paymentDataRegex };
     }
 
+    // Include PayStatus as Failed in the filter
+    filter.PayStatus = 'success';
+
     paymentIntents = await paymentIntentSchema.find(filter);
 
-  
     res.status(200).json(paymentIntents);
   } catch (error) {
-
     res.status(500).json({ error: error.message });
   }
 });
 
+
+
+// Backend route for getting payment intents
+// router.get('/get-payment-intents',authenticateToken, async (req, res) => {
+//   try {
+//     let paymentIntents;
+//     const { startDate, endDate, Orderstatus,paymentData } = req.query;
+
+//     let filter = {};
+
+//     if (startDate && endDate) {
+//       filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+//     } else if (startDate) {
+//       filter.createdAt = { $gte: new Date(startDate) };
+//     } else if (endDate) {
+//       filter.createdAt = { $lte: new Date(endDate) };
+//     }
+
+//     if (Orderstatus) {
+//       // Remove additional encoding and use the value directly
+//       const orderStatusRegex = new RegExp(Orderstatus, 'i');
+//       filter.Orderstatus = { $regex: orderStatusRegex };
+//     }
+    
+
+//     if(paymentData){
+//       const paymentDataRegex = new RegExp(paymentData, 'i');
+//       filter.paymentData = { $regex: paymentDataRegex };
+//     }
+
+//     paymentIntents = await paymentIntentSchema.find(filter);
+
+  
+//     res.status(200).json(paymentIntents);
+//   } catch (error) {
+
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+// const PaymentStatus = require('./PaymentStatus');
+
+// router.get('/get-payment-intents', async (req, res) => {
+//   try {
+//     // let paymentIntents;
+//     const { startDate, endDate, Orderstatus } = req.query;
+
+//     let filter = {};
+
+//  let filters = {};
+//     if (startDate && endDate) {
+//       filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+//       filters.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+//     } else if (startDate) {
+//       filter.createdAt = { $gte: new Date(startDate) };
+//       filters.createdAt = { $gte: new Date(startDate) };
+
+//     } else if (endDate) {
+//       filter.createdAt = { $lte: new Date(endDate) };
+//       filters.createdAt = { $lte: new Date(endDate) };
+//     }
+
+//     if (Orderstatus) {
+//       const orderStatusRegex = new RegExp(Orderstatus, 'i');
+//       filter.Orderstatus = { $regex: orderStatusRegex };
+//       filters.Orderstatus = { $regex: orderStatusRegex };
+//     }
+
+//     // Include filter for paymentData being "Cash on delivery"
+//     // filter['paymentData'] = "Cash on delivery";
+
+//     const paymentStatuses = await PaymentStatus.find({}, 'clientSecret');
+
+//     const clientSecrets = paymentStatuses.map(status => status.clientSecret);
+
+
+
+//     const clie= await paymentIntentSchema.find({},'paymentData.client_secret');
+//     const clieSecrets = clie.map(item => item?.paymentData?.client_secret).filter(secret => secret);
+//     console.log("clientSecrets:", clientSecrets);
+//     console.log("clieSecrets:", clieSecrets);
+
+// // Check if both arrays are empty
+//    console.log("clientSecrets Length:", clientSecrets.length);
+//    console.log("clieSecrets Length:", clieSecrets.length);
+
+// // Find secret keys present in clientSecrets but not in clieSecrets
+//     const uniqueSecrets = clieSecrets.filter(secret => !clientSecrets.includes(secret));
+//    filters['paymentData.client_secret'] = { $in: uniqueSecrets };
+//    filter['paymentData'] = "Cash on delivery";
+//     const paymentIntents1 = await paymentIntentSchema.find(filter);
+//     const paymentIntents2=await paymentIntentSchema.find(filters);
+//     const paymentIntents = { paymentIntents1, paymentIntents2 };
+
+//     // Respond with the retrieved payment intents
+//     res.status(200).json(paymentIntents);
+//   } catch (error) {
+//     // If an error occurs, respond with an error message
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 router.get('/get-payment-intent-by-id/:orderId',authenticateToken, async (req, res) => {
   try {

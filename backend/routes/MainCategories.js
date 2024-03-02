@@ -558,21 +558,21 @@ router.post('/addBanner', upload.array('photos', 10), async (req, res) => {
         existingBanner.navigate = req.body.navigate;
       }
 
-      const uploadedPhotoUrls = [];
+      // const uploadedPhotoUrls = [];
 
-      // Upload each photo to S3 and store the S3 URLs
-      for (const file of uploadedPhotos) {
-        const fileName = file.originalname; // Use the original filename
-        await uploadToS3(file);
+      // // Upload each photo to S3 and store the S3 URLs
+      // for (const file of  req.files) {
+      //   const fileName = file.originalname; // Use the original filename
+      //   await uploadToS3(file);
   
-        // Construct the S3 URL
-        const s3Url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
-        uploadedPhotoUrls.push({ url: s3Url, filename: fileName });
-      }
+      //   // Construct the S3 URL
+      //   const s3Url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
+      //   uploadedPhotoUrls.push({ url: s3Url, filename: fileName });
+      // }
   
-      if (req.files && req.files['photos']) {
-        existingBanner.photos = uploadedPhotoUrls;
-      }
+      // if (req.files && req.files['photos']) {
+      //   existingBanner.photos = uploadedPhotoUrls;
+      // }
       const updatedBanner = await existingBanner.save();
       
       res.status(200).json(updatedBanner);
