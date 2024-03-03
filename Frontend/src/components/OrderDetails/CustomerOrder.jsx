@@ -9,6 +9,7 @@ import PrintPage from './Invoice';
 import { Wrapper } from './addProductWrapper';
 import Mapfunction from '../Map/Mapfunction';
 import SendEmailButton from './SendInvoice';
+import StatusChange from './StatusChange';
 
 const CustomerOrder = () => {
     const { id } = useParams();
@@ -212,6 +213,7 @@ let Clientlocation=''
                                             <PrintPage intent={selectedIntent} />
                                            
                                         </StyledPrintPageContainer>
+                                        {/* <StatusChange intentIdss={selectedIntent.orderId} /> */}
                                     </OrderDetails>
                                 </ItemsWrapper>
                                 <p>Customer Location:{Clientlocation}</p>

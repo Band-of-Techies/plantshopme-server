@@ -565,42 +565,42 @@ router.post('/create-cod-intent', async (req, res) => {
   }
 });
 
-router.get('/get-payment-intents', authenticateToken, async (req, res) => {
-  try {
-    let paymentIntents;
-    const { startDate, endDate, Orderstatus, paymentData } = req.query;
+// router.get('/get-payment-intents', authenticateToken, async (req, res) => {
+//   try {
+//     let paymentIntents;
+//     const { startDate, endDate, Orderstatus, paymentData } = req.query;
 
-    let filter = {};
+//     let filter = {};
 
-    if (startDate && endDate) {
-      filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
-    } else if (startDate) {
-      filter.createdAt = { $gte: new Date(startDate) };
-    } else if (endDate) {
-      filter.createdAt = { $lte: new Date(endDate) };
-    }
+//     if (startDate && endDate) {
+//       filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+//     } else if (startDate) {
+//       filter.createdAt = { $gte: new Date(startDate) };
+//     } else if (endDate) {
+//       filter.createdAt = { $lte: new Date(endDate) };
+//     }
 
-    if (Orderstatus) {
-      // Remove additional encoding and use the value directly
-      const orderStatusRegex = new RegExp(Orderstatus, 'i');
-      filter.Orderstatus = { $regex: orderStatusRegex };
-    }
+//     if (Orderstatus) {
+//       // Remove additional encoding and use the value directly
+//       const orderStatusRegex = new RegExp(Orderstatus, 'i');
+//       filter.Orderstatus = { $regex: orderStatusRegex };
+//     }
 
-    if (paymentData) {
-      const paymentDataRegex = new RegExp(paymentData, 'i');
-      filter.paymentData = { $regex: paymentDataRegex };
-    }
+//     if (paymentData) {
+//       const paymentDataRegex = new RegExp(paymentData, 'i');
+//       filter.paymentData = { $regex: paymentDataRegex };
+//     }
 
-    // Include PayStatus as Failed in the filter
-    filter.PayStatus = 'success';
+//     // Include PayStatus as Failed in the filter
+//     filter.PayStatus = 'success';
 
-    paymentIntents = await paymentIntentSchema.find(filter);
+//     paymentIntents = await paymentIntentSchema.find(filter);
 
-    res.status(200).json(paymentIntents);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+//     res.status(200).json(paymentIntents);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 
 
@@ -702,6 +702,48 @@ router.get('/get-payment-intents', authenticateToken, async (req, res) => {
 //     res.status(500).json({ error: error.message });
 //   }
 // });
+
+router.get('/get-payment-intents', authenticateToken, async (req, res) => {
+  try {
+    let paymentIntents;
+    const { startDate, endDate, Orderstatus, paymentData } = req.query;
+
+    let filter = {};
+
+    if (startDate && endDate) {
+      filter.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    } else if (startDate) {
+      filter.createdAt = { $gte: new Date(startDate) };
+    } else if (endDate) {
+      filter.createdAt = { $lte: new Date(endDate) };
+    }
+
+    if (Orderstatus) {
+      // Remove additional encoding and use the value directly
+      const orderStatusRegex = new RegExp(Orderstatus, 'i');
+      filter.Orderstatus = { $regex: orderStatusRegex };
+    }
+
+    if (paymentData) {
+      const paymentDataRegex = new RegExp(paymentData, 'i');
+      filter.paymentData = { $regex: paymentDataRegex };
+    }
+
+    // Include PayStatus as Failed in the filter
+    filter.PayStatus = 'success';
+
+    // Sort by createdAt in descending order (-1 indicates descending order)
+    const sortCriteria = { createdAt: -1 };
+
+    paymentIntents = await paymentIntentSchema.find(filter).sort(sortCriteria);
+
+    res.status(200).json(paymentIntents);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 router.get('/get-payment-intent-by-id/:orderId',authenticateToken, async (req, res) => {
   try {
