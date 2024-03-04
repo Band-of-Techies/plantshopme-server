@@ -4,14 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./styles.module.css";
 
 const Signup = () => {
-    const [data, setData] = useState({
+    const initialData = {
         firstName: "",
         lastName: "",
         username: "",
         password: "",
         userType: "",
-    });
+    };
+
+    const [data, setData] = useState(initialData);
     const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = ({ currentTarget: input }) => {
@@ -26,6 +29,8 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true); // Set submitting state to true
+
         try {
             const url = `${process.env.REACT_APP_BASE_URL}/users`;
 
@@ -34,10 +39,13 @@ const Signup = () => {
 
             const { data: res } = await axios.post(url, postData);
 
+            setIsSubmitting(false); // Reset submitting state
             navigate("/signup");
 
-            console.log(res.message);
+            setError(res.message);
+            setData(initialData); // Reset form fields
         } catch (error) {
+            setIsSubmitting(false); // Reset submitting state
             if (
                 error.response &&
                 error.response.status >= 400 &&
@@ -111,9 +119,9 @@ const Signup = () => {
                             className={styles.input}
                         />
                         {error && <div className={styles.error_msg}>{error}</div>}
-                        <button type="submit" className={styles.green_btn}>
+                        <button type="submit" className={styles.green_btn} disabled={isSubmitting}>
                             {/* Submit button */}
-                            Sign Up
+                            {isSubmitting ? "Processing..." : "Sign Up"}
                         </button>
                     </form>
                 </div>
