@@ -203,7 +203,7 @@ let Clientlocation=''
                                         {/* Order/payment details here */}
                                         <p>Order Placed At: {data.createdAt}</p>
                                         <p>Payment Mode: {(isNaN((data?.paymentData?.amount / 100).toFixed(2)) ? (' Cash on Delivery') : ' Online payment')}</p>
-                                        <p>Order Status:{data.Orderstatus}</p>
+                                        
                                         <p>GrandTotal: {finalAmount}</p>
                                         <p>Shipping Fee: {data.shipping_fee}</p>
                                         <p>Delivery Location: {data.deliveryLocation}</p>
@@ -213,7 +213,7 @@ let Clientlocation=''
                                             <PrintPage intent={selectedIntent} />
                                            
                                         </StyledPrintPageContainer>
-                                        {/* <StatusChange intentIdss={selectedIntent.orderId} /> */}
+                                        <StatusChange intentIdss={selectedIntent} />
                                     </OrderDetails>
                                 </ItemsWrapper>
                                 <p>Customer Location:{Clientlocation}</p>
