@@ -115,7 +115,7 @@ const StatusChange = ({ intentIdss }) => {
     }, []);
 
     return (
-        <MainWrapper>
+        <div>
             <p>Order Status</p>
             {paymentIntents.map(intent => (
                 <div key={intent._id}>
@@ -142,7 +142,7 @@ const StatusChange = ({ intentIdss }) => {
                 </div>
             ))}
             <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} />
-        </MainWrapper>
+            </div>
     );
 };
 

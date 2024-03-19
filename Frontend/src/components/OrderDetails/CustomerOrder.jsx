@@ -202,7 +202,7 @@ let Clientlocation=''
                                         <h3>Order/Payment Details</h3>
                                         {/* Order/payment details here */}
                                         <p>Order Placed At: {data.createdAt}</p>
-                                        <p>Payment Mode: {(isNaN((data?.paymentData?.amount / 100).toFixed(2)) ? (' Cash on Delivery') : ' Online payment')}</p>
+                                        <p>Payment Mode: {(isNaN((data?.paymentData)) ? (' Cash on Delivery') : ' Online payment')}</p>
                                         
                                         <p>GrandTotal: {finalAmount}</p>
                                         <p>Shipping Fee: {data.shipping_fee}</p>

@@ -43,6 +43,7 @@ const PaymentIntentsTable = () => {
   const [selectedOrderStatus2, setSelectedOrderStatus2] = useState('');
   const [selectedpaymentData, setpaymentDataRegex] = useState('');
   const [loading, setLoading] = useState(true);
+  const[selectedorderId,setselectedorderId]=useState('');
 
 
   const handleUserTypeChange = (e) => {
@@ -57,6 +58,11 @@ const PaymentIntentsTable = () => {
   const handleEndDateChange = (event) => {
     setSelectedEndDate(event.target.value);
   };
+
+
+  const handleselectedorderIdchange=(event)=>{
+    setselectedorderId(event.target.value);
+  }
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -212,6 +218,7 @@ const PaymentIntentsTable = () => {
     if (selectedEndDate) params.endDate = selectedEndDate;
     if (selectedOrderStatus) params.Orderstatus = selectedOrderStatus;
     if (selectedpaymentData) params.paymentData = selectedpaymentData;
+    if(selectedorderId) params.orderId=selectedorderId;
   
     axios
       .get(apiUrl, { params, ...config }) // Pass params as the second argument
@@ -250,7 +257,7 @@ const PaymentIntentsTable = () => {
 
   useEffect(() => {
     fetchPaymentIntents();
-  }, [selectedStartDate, selectedEndDate, selectedOrderStatus, selectedpaymentData]);
+  }, [selectedStartDate, selectedEndDate, selectedOrderStatus, selectedpaymentData,selectedorderId]);
 
   return (
     <div className='single'>
@@ -288,7 +295,7 @@ const PaymentIntentsTable = () => {
                     shrink: true,
                   }}
                 />
-                <div style={{ paddingTop: '20px' }}>
+                <div style={{ paddingTop: '20px',paddingLeft:'20px' ,justifyContent: 'space-between', flex: 1}}>
                   <FormControl style={{ flex: 1, marginLeft: '20px' }}>
                     <Select onChange={handleUserTypeChange} value={selectedpaymentData} displayEmpty
                       inputProps={{ 'aria-label': 'Without label' }}>
@@ -299,6 +306,20 @@ const PaymentIntentsTable = () => {
 
                     </Select>
                   </FormControl>
+
+                <TextField
+                  id="orderId"
+                  label="Order Id"
+                  type="text"
+                  variant="outlined"
+                  value={selectedorderId}
+                  onChange={handleselectedorderIdchange
+                  }
+                  style={{paddingLeft:'10px'}}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
                 </div>
               </div>
               <FormControl style={{ flex: 1, marginLeft: '20px' }}>
@@ -355,7 +376,7 @@ const PaymentIntentsTable = () => {
                               </Link>
                             </TableCell>
                             <TableCell>
-                              {(isNaN((intent?.paymentData?.amount / 100).toFixed(2)) ? (' COD') : (intent?.paymentData?.amount / 100).toFixed(2) + ' AED')}
+                              {(isNaN((intent?.paymentData)) ? (' COD') : (intent?.paymentData) + ' AED')}
                             </TableCell>
                             <TableCell>{new Date(intent?.createdAt).toLocaleString()}</TableCell>
                             <TableCell>{intent?.Orderstatus}</TableCell>

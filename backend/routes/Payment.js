@@ -706,7 +706,7 @@ router.post('/create-cod-intent', async (req, res) => {
 router.get('/get-payment-intents', authenticateToken, async (req, res) => {
   try {
     let paymentIntents;
-    const { startDate, endDate, Orderstatus, paymentData } = req.query;
+    const { startDate, endDate, Orderstatus, paymentData ,orderId} = req.query;
 
     let filter = {};
 
@@ -729,8 +729,15 @@ router.get('/get-payment-intents', authenticateToken, async (req, res) => {
       filter.paymentData = { $regex: paymentDataRegex };
     }
 
+    if (orderId) {
+      // Remove additional encoding and use the value directly
+      const orderIdRegex = new RegExp(orderId, 'i');
+      filter.orderId = { $regex: orderIdRegex };
+    }
+
     // Include PayStatus as Failed in the filter
     filter.PayStatus = 'success';
+
 
     // Sort by createdAt in descending order (-1 indicates descending order)
     const sortCriteria = { createdAt: -1 };
@@ -1000,13 +1007,21 @@ router.put('/update-Refundstatus/:orderId', async (req, res) => {
 
 const PaymentIntent = require('../models/Payment/Payment');
 
-router.get('/ordersByProductId/:productId', async (req, res) => {
+router.get('/ordersByProductIdOrTitle/:param', async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { param } = req.params;
     const { startDate, endDate } = req.query; // Get startDate and endDate from query parameters
 
-    // Initialize the match object with the productId
-    let match = { 'updatedCartItems.productId': productId };
+    // Initialize the match object
+    let match = {};
+
+    // Check if the param is a valid ObjectId (for productId)
+    if (/^[0-9a-fA-F]{24}$/.test(param)) {
+      match['updatedCartItems.productId'] = param;
+    } else {
+      // If the param is not a valid ObjectId, treat it as title and use regex
+      match['updatedCartItems.title'] = new RegExp(param, 'i');
+    }
 
     // If startDate and endDate are provided, add date filtering to the match object
     if (startDate && endDate) {
@@ -1023,20 +1038,20 @@ router.get('/ordersByProductId/:productId', async (req, res) => {
       match.createdAt = { $gte: start, $lte: end };
     }
 
-    // Aggregate to find orders containing the specified productId and within the date range (if provided)
+    // Aggregate to find orders containing the specified productId or title and within the date range (if provided)
     const orders = await PaymentIntent.aggregate([
-      // Match documents containing the specified productId and createdAt within the date range (if provided)
+      // Match documents containing the specified productId or title and createdAt within the date range (if provided)
       { $match: match },
       // Unwind the updatedCartItems array
       { $unwind: '$updatedCartItems' },
-      // Match documents containing the specified productId again (in case there are multiple products in an order)
-      { $match: { 'updatedCartItems.productId': productId } },
+      // Match documents containing the specified productId or title again (in case there are multiple products in an order)
+      { $match: match },
       // Group by orderId to get unique orderIds
       { $group: { _id: '$orderId' } }
     ]);
 
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: 'No orders found for the specified productId and date range' });
+      return res.status(404).json({ message: 'No orders found for the specified productId or title and date range' });
     }
 
     // Extract orderId from the aggregation result
@@ -1049,6 +1064,8 @@ router.get('/ordersByProductId/:productId', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
+
 
 
 
