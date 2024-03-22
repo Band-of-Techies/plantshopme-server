@@ -4,7 +4,7 @@ import 'jspdf-autotable'; // Import the autoTable plugin
 import invoice from '../Image/invoice1.jpeg';
 import footerinvoice from '../Image/footerinvoice.jpeg'
 import logo from './logo.png';
-import whatsappicon from './whatsapp.png'
+import whatsappicon from './wht.jpg'
 import inboxicon from './inbox1.jpg';
 
 const numberToWords = (num) => {
