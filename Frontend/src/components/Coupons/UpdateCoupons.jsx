@@ -43,7 +43,7 @@ const UpdateCoupons = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`https://admin.myplantstore.me/api/UpdateCoupon/${id}`, couponData);
+      const response = await axios.put(`${process.env.REACT_APP_BASE_URL}/UpdateCoupon/${id}`, couponData);
       toast.success('Coupon updated successfully');
       // You can redirect or perform other actions on success
     } catch (error) {
@@ -55,7 +55,7 @@ const UpdateCoupons = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this coupon?')) {
       try {
-        await axios.delete(`https://admin.myplantstore.me/api/DeleteCoupon/${id}`);
+        await axios.delete(`${process.env.REACT_APP_BASE_URL}/DeleteCoupon/${id}`);
         setIsDeleted(true);
         toast.success('Coupon deleted successfully');
         // Navigate to /viewCoupons
