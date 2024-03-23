@@ -29,7 +29,7 @@ const UpdateCoupons = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`https://admin.myplantstore.me/api/GetCoupon/${id}`);
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/GetCoupon/${id}`);
         setCouponData(response.data);
       } catch (error) {
         console.error('Error fetching coupon details:', error);

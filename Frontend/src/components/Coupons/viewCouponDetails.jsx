@@ -36,7 +36,7 @@ const ViewCoupons = () => {
             };
 
             // Send a GET request with the filter parameters
-            const response = await axios.get('https://admin.myplantstore.me/api/GetAllCoupons', {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/GetAllCoupons`, {
                 params: filters,
             });
 
@@ -61,7 +61,7 @@ const ViewCoupons = () => {
             };
 
             // Send a GET request with the filter parameters
-            const response = await axios.get('https://admin.myplantstore.me/api/GetAllCoupons', {
+            const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/GetAllCoupons`, {
                 params: filters,
             });
 
