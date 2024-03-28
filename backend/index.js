@@ -115,7 +115,7 @@ const coinsRouter = require('./routes/Coins/coinsAndCoupons')
 const getCustomerDataRoute = require('./routes/getCustomerData/getCustomer')
 
 const RoleRouter=require('./routes/RoleManagement/role')
-
+const Editabletop=require('./routes/EditableTop')
 // Database connection
 const phonemsgRouter=require('./routes/phoneMessage');
 const MailAttachRouter=require('./sendMailwithAttach')
@@ -130,6 +130,7 @@ app.use(cors());
 app.use("/api",MailAttachRouter);
 app.use("/auth", authRoute);
 app.use("/api",invoiceRouter);
+app.use("/api",Editabletop)
 // Mount route handlers
 app.use("/api",phonemsgRouter)
 app.use("/api",RoleRouter)

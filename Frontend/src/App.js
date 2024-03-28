@@ -44,6 +44,10 @@ import CouponManagement from "./components/Coupons/CouponManagement";
 import UpdateProductCategories from "./components/UpdateProductCategories/UpdateProductCategories";
 import User from "./components/Coupons/User";
 import Sidebar from "./components/sidebar/Sidebar";
+import EditableTop from "./components/OfferBanners/EditableTop";
+import PurchaseList from "./components/PurchaseList/PurchaseList";
+import AnalysisList from "./components/PurchaseList/AnalysisList";
+
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -158,6 +162,15 @@ function App() {
 
           {user && <Route path="/refundform/:id" element={<RefundForm />}></Route>}
           <Route path="/refundform/:id" element={<Navigate replace to="/login" />} />
+
+          {user && <Route path="/EditableTop" element={<EditableTop />}></Route>}
+          <Route path="/EditableTop" element={<Navigate replace to="/login" />} />
+
+          {user && <Route path="/PurchaseList" element={<PurchaseList />}></Route>}
+          <Route path="/PurchaseList" element={<Navigate replace to="/login" />} />
+
+          {user && <Route path="/AnalysisList/:response" element={<AnalysisList />}></Route>}
+          <Route path="/AnalysisList/:response" element={<Navigate replace to="/login" />} />
 
         </Routes>
       </BrowserRouter>

@@ -9,6 +9,7 @@ import { faUpload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Select from 'react-select';
 import axios from 'axios';
 import { Login } from '@mui/icons-material';
+import EditableTop from './EditableTop';
 
 const OfferBanner = () => {
     const options = [
@@ -397,6 +398,8 @@ useEffect(() => {
                                     }}
                                 /><br/>
                                     <button className='btn' type='submit' onClick={uploadBanners}>submit</button>
+                                    <div><EditableTop/></div>
+                                    
         </div>
         <div className='edit-div'>
         <h4>Edit {selectedOption? getLabelForValue(selectedOption) :options[0].label}</h4>

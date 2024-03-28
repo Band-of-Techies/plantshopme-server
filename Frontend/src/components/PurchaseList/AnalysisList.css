@@ -1,0 +1,29 @@
+/* styles.css */
+.singleContainer {
+    display: flex;
+  }
+  
+  .orderDetails {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .orderDetails h1 {
+    color: #333;
+  }
+  
+  .orderDetails .product {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .orderDetails .product h2 {
+    color: #666;
+  }
+  
+  .orderDetails .product p {
+    margin: 5px 0;
+  }
+  

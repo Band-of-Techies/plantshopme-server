@@ -472,6 +472,278 @@ let unique =true
   res.json({ products, totalProducts: productsCount, numOfPages });
 });
 
+router.get('/getAllProducts1', async (req, res) => {
+  const { search, sort, FeatureTag, max_price, min_price, maincategory, category, subcategory } = req.query;
+
+  let unique = true;
+  let queryArray = [];
+  if (maincategory && maincategory !== 'all' && (!category || category === 'all') && (!subcategory || subcategory === 'all')) {
+    const mainCategoryArray = maincategory.split(',');
+    queryArray.push({ maincategory: { $in: mainCategoryArray } });
+  }
+
+  if (category && category !== 'all') {
+    const categoryArray = category.split(',');
+    queryArray.push({ category: { $in: categoryArray } });
+  }
+
+  if (subcategory && subcategory !== 'all') {
+    const subCategoryArray = subcategory.split(',');
+    queryArray.push({ subcategory: { $in: subCategoryArray } });
+  }
+
+  let queryObject = {};
+  if (queryArray.length > 0) {
+    queryObject = (unique === 'unique') ? { $and: queryArray } : { $or: queryArray };
+  }
+
+
+  if (search) {
+    queryObject.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } },
+      { SKU: { $regex: search, $options: 'i' } },
+      { scienticName: { $regex: search, $options: 'i' } }
+
+    ];
+  }
+
+  if (FeatureTag && FeatureTag !== 'all') {
+    queryObject.FeatureTag = FeatureTag;
+  }
+
+  let result = Product.find(queryObject);
+
+  let products = await result;
+
+  // Fetch FlashSale data and merge it into the products
+  const productIds = products.map((product) => product._id);
+  const flashSaleData = await FlashSale.find({ ProductId: { $in: productIds } });
+
+  // Fetch 'pots' and 'allLengths' data for each product
+  products = await Promise.all(
+    products.map(async (product) => {
+      const flashSaleInfo = flashSaleData.find(
+        (flashSale) => flashSale.ProductId.toString() === product._id.toString()
+      );
+      const dimensions = await SelectedDimensions.find({ productName: product.title })
+
+      // Check if the flash sale is still active
+      let flashState = false
+      let isFlashSaleActive = false;
+      if (flashSaleInfo) {
+        flashState = checkFlashState(flashSaleInfo.StartDate, flashSaleInfo.TimeInHours, flashSaleInfo.StartTime);
+      }
+
+      // Find the lowest price among the dimensions
+      let lowestPrice = Math.min(...dimensions.map(dimension => parseFloat(dimension.Price)));
+
+      return {
+        SKU: product.SKU,
+        title: product.title,
+        photos: product.photos[0].url,
+        price: lowestPrice,
+        description: product.description,
+        flashSaleInfo:
+          flashSaleInfo && (flashSaleInfo.Status === 'Unlimited' || flashState)
+            ? {
+              ...flashSaleInfo.toObject(),
+              Status: flashSaleInfo.Status || 'Unlimited',
+            }
+            : null,
+      };
+
+    })
+  );
+  let productsCount = 0;
+
+  // Now you can filter and sort the products based on the price
+  if (max_price && min_price) {
+    products = products.filter(product => product.price >= parseFloat(min_price) && product.price <= parseFloat(max_price));
+    productsCount = products.length;
+  }
+
+  if (sort === 'price-lowest') {
+    products.sort((a, b) => a.price - b.price);
+  }
+  if (sort === 'price-highest') {
+    products.sort((a, b) => b.price - a.price);
+  }
+  if (sort === 'latest') {
+    products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+  if (sort === 'oldest') {
+    products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }
+  if (sort === 'a-z') {
+    products.sort((a, b) => a.title.localeCompare(b.title));
+  }
+  if (sort === 'z-a') {
+    products.sort((a, b) => b.title.localeCompare(a.title));
+  }
+
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 850;
+  const skip = (page - 1) * limit;
+
+  // Use products instead of result here
+  products = products.slice(skip, skip + limit);
+
+  const totalProducts = await Product.countDocuments(queryObject);
+  const numOfPages = Math.ceil(productsCount / limit);
+  console.log(products);
+  res.json({ products, totalProducts: productsCount, numOfPages });
+});
+
+
+
+const fs = require('fs');
+const XLSX = require('xlsx');
+
+router.get('/getAllProducts2', async (req, res) => {
+  const { search, sort, FeatureTag, max_price, min_price, maincategory, category, subcategory } = req.query;
+
+  let unique = true;
+  let queryArray = [];
+  if (maincategory && maincategory !== 'all' && (!category || category === 'all') && (!subcategory || subcategory === 'all')) {
+    const mainCategoryArray = maincategory.split(',');
+    queryArray.push({ maincategory: { $in: mainCategoryArray } });
+  }
+
+  if (category && category !== 'all') {
+    const categoryArray = category.split(',');
+    queryArray.push({ category: { $in: categoryArray } });
+  }
+
+  if (subcategory && subcategory !== 'all') {
+    const subCategoryArray = subcategory.split(',');
+    queryArray.push({ subcategory: { $in: subCategoryArray } });
+  }
+
+  let queryObject = {};
+  if (queryArray.length > 0) {
+    queryObject = (unique === 'unique') ? { $and: queryArray } : { $or: queryArray };
+  }
+
+
+  if (search) {
+    queryObject.$or = [
+      { title: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } },
+      { SKU: { $regex: search, $options: 'i' } },
+      { scienticName: { $regex: search, $options: 'i' } }
+
+    ];
+  }
+
+  if (FeatureTag && FeatureTag !== 'all') {
+    queryObject.FeatureTag = FeatureTag;
+  }
+
+  let result = Product.find(queryObject);
+
+  let products = await result;
+
+  // Fetch FlashSale data and merge it into the products
+  const productIds = products.map((product) => product._id);
+  const flashSaleData = await FlashSale.find({ ProductId: { $in: productIds } });
+
+  // Fetch 'pots' and 'allLengths' data for each product
+  products = await Promise.all(
+    products.map(async (product) => {
+      const flashSaleInfo = flashSaleData.find(
+        (flashSale) => flashSale.ProductId.toString() === product._id.toString()
+      );
+      const dimensions = await SelectedDimensions.find({ productName: product.title })
+
+      // Check if the flash sale is still active
+      let flashState = false
+      let isFlashSaleActive = false;
+      if (flashSaleInfo) {
+        flashState = checkFlashState(flashSaleInfo.StartDate, flashSaleInfo.TimeInHours, flashSaleInfo.StartTime);
+      }
+
+      // Find the lowest price among the dimensions
+      let lowestPrice = Math.min(...dimensions.map(dimension => parseFloat(dimension.Price)));
+
+      return {
+        SKU: product.SKU,
+        title: product.title,
+        description: product.description || product.title,
+        availability: '',
+        link: `https://myplantstore.me/products/${product._id}`,
+        image_link: product.photos[0].url,
+        price: lowestPrice +' AED',
+        'identifier exists': '',
+        gtin: '',
+        mpn: '',
+        brand: 'My Plantstore',
+      };
+
+    })
+  );
+
+  let productsCount = products.length;
+
+  // Now you can filter and sort the products based on the price
+  if (max_price && min_price) {
+    products = products.filter(product => product.price >= parseFloat(min_price) && product.price <= parseFloat(max_price));
+    productsCount = products.length;
+  }
+
+  if (sort === 'price-lowest') {
+    products.sort((a, b) => a.price - b.price);
+  }
+  if (sort === 'price-highest') {
+    products.sort((a, b) => b.price - a.price);
+  }
+  if (sort === 'latest') {
+    products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+  if (sort === 'oldest') {
+    products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  }
+  if (sort === 'a-z') {
+    products.sort((a, b) => a.title.localeCompare(b.title));
+  }
+  if (sort === 'z-a') {
+    products.sort((a, b) => b.title.localeCompare(a.title));
+  }
+
+  let productsData = products.map(product => ({
+    SKU: product.SKU,
+    title: product.title,
+    description: product.description,
+    availability: product.availability,
+    link: product.link,
+    'image link': product.image_link,
+    price: product.price,
+    'identifier exists': product['identifier exists'],
+    gtin: product.gtin,
+    mpn: product.mpn,
+    brand: product.brand,
+  }));
+
+  // Convert data to a worksheet
+  const ws = XLSX.utils.json_to_sheet(productsData);
+
+  // Create a new workbook
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Products');
+
+  // Write to a file
+  const excelFilePath = './products.xlsx';
+  XLSX.writeFile(wb, excelFilePath);
+
+  // Respond with the file
+  res.download(excelFilePath, 'products.xlsx', (err) => {
+    if (err) {
+      console.log('Error sending the file:', err);
+    }
+    // Delete the file after sending
+    fs.unlinkSync(excelFilePath);
+  });
+});
 
 
 

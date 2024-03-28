@@ -150,15 +150,18 @@ router.get('/getorderfilter', async (req, res) => {
       filter.Orderstatus = { $regex: orderStatusRegex };
     }
 
+    // Add condition for PayStatus
+    filter.PayStatus = 'success';
+
     paymentIntents = await paymentIntentSchema.find(filter);
 
-   
-    res.status(200).json({ count: paymentIntents.length});
+    res.status(200).json({ count: paymentIntents.length });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 const Product = require('../../models/AddProduct/AddProduct'); // Adjust the path accordingly
 
@@ -178,7 +181,6 @@ router.get('/getamountfilter', async (req, res) => {
     let filter = {};
     const { dateRange, orderStatus } = req.query;
 
-   
     if (dateRange === 'today') {
       filter.createdAt = {
         $gte: new Date(new Date().setHours(00, 00, 00)),
@@ -197,29 +199,29 @@ router.get('/getamountfilter', async (req, res) => {
       
     }
 
-    
     if (orderStatus) {
       const orderStatusRegex = new RegExp(orderStatus, 'i');
       filter.Orderstatus = { $regex: orderStatusRegex };
     }
 
-   
+    // Add condition for PayStatus
+    filter.PayStatus = 'success';
+
     const result = await paymentIntentSchema.aggregate([
       { $match: filter },
-      { $group: { _id: null, totalAmount: { $sum: { $divide: ['$total', 1] } } } },
+      { $group: { _id: null, totalAmount: { $sum: '$total' } } },
       { $project: { _id: 0, totalAmount: 1 } },
     ]);
 
-   
     const totalAmount = result.length > 0 ? result[0].totalAmount : 0;
 
-    
     res.status(200).json({ totalAmount });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 

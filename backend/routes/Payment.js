@@ -1067,6 +1067,108 @@ router.get('/ordersByProductIdOrTitle/:param', async (req, res) => {
 
 
 
+router.get('/orders', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    let filter = {};
+
+    // Check if startDate and endDate are provided
+    if (startDate && endDate) {
+      // Split the date string into day, month, and year
+      const [startDay, startMonth, startYear] = startDate.split('/');
+      const [endDay, endMonth, endYear] = endDate.split('/');
+
+      // Create Date objects using the parsed day, month, and year
+      const start = new Date(`${startYear}-${startMonth}-${startDay}`);
+      const end = new Date(`${endYear}-${endMonth}-${endDay}`);
+
+      // Ensure both startDate and endDate are valid dates
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format' });
+      }
+
+      // Add date range filtering to the filter object
+      filter.createdAt = { $gte: start, $lte: end };
+    }
+
+    // Add filter for PayStatus
+    filter.PayStatus = 'success';
+
+    // Fetch orders based on the filter
+    const orders = await PaymentIntent.find(filter);
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found' });
+    }
+
+    // Return the list of orders
+    res.json({ orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+router.get('/get-purchaseList', async (req, res) => {
+  try {
+    const { orderIds } = req.query;
+
+    // Split the orderIds string into an array
+    const orderIdArray = orderIds.split(',');
+
+    // Aggregate to group products by productId and dimension, and calculate count, total product quantity sum, product name, dimension values, and prices
+    const result = await paymentIntentSchema.aggregate([
+      // Match documents with orderId in the provided orderIds
+      { $match: { orderId: { $in: orderIdArray } } },
+      // Unwind the updatedCartItems array
+      { $unwind: '$updatedCartItems' },
+      // Project necessary fields
+      {
+        $project: {
+          _id: 0,
+          orderId: 1,
+          productId: '$updatedCartItems.productId',
+          dimensionId: '$updatedCartItems.dimension._id',
+          productName: '$updatedCartItems.dimension.productName',
+          dimensionValues: '$updatedCartItems.dimension',
+          productPrice: '$updatedCartItems.dimension.Price',
+          productQuantity: '$updatedCartItems.productQuantity'
+        }
+      },
+      // Group by productId and dimension to calculate count, total product quantity sum, product name, dimension values, and prices
+      {
+        $group: {
+          _id: {
+            productId: '$productId',
+            dimensionId: '$dimensionId'
+          },
+          productName: { $first: '$productName' },
+          dimensionValues: { $first: '$dimensionValues' },
+          productPrice: { $first: '$productPrice' },
+          count: { $sum: 1 },
+          totalQuantity: { $sum: '$productQuantity' }
+        }
+      },
+      // Sort by product name in ascending order
+      { $sort: { productName: 1 } }
+    ]);
+
+    if (!result || result.length === 0) {
+      return res.status(404).json({ error: 'Products not found' });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
+
+
 
 
 
