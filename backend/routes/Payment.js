@@ -1097,8 +1097,10 @@ router.get('/orders', async (req, res) => {
     // Fetch orders based on the filter
     const orders = await PaymentIntent.find(filter);
 
+    // Check if orders are found
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: 'No orders found' });
+      // Return an empty array with the provided start and end dates
+      return res.json({ orders: [], startDate, endDate });
     }
 
     // Return the list of orders

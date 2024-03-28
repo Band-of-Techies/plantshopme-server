@@ -269,12 +269,12 @@ const PaymentIntentsTable = () => {
 
         <NotificationComponent/>
             <h3>Order Details</h3><br/>
-            <div style={{paddingTop:'12px',paddingBottom:'20px'}}>
+            {/* <div style={{paddingTop:'12px',paddingBottom:'20px'}}>
               <Link to="/PurchaseList" className="view-coupons-link">
                 <Button variant="outlined" color="primary">
                   View Purchase List
                 </Button>
-              </Link></div>
+              </Link></div> */}
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ flex: 1, marginBottom: '20px', justifyContent: 'space-between', }}>
